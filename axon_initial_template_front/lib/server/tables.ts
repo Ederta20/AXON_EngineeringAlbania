@@ -36,7 +36,7 @@ export const TABLES: TableDef[] = [
   { table: "challenge_results", key: "challenge_results", pk: ["id"], cols: ["id", "case_id", "challenge_id", "score", "reviewed_by", "submitted_at"] },
   { table: "benchmarks", key: "benchmarks", pk: ["path_id", "stage"], cols: ["path_id", "stage", "median_days", "n_completed", "provisional"] },
   { table: "path_suggestions", key: "path_suggestions", pk: ["id"], cols: ["id", "path_id", "suggestion", "cause_flag_ids", "status", "approved_by"] },
-  { table: "audit_log", key: "audit_log", pk: ["id"], cols: ["id", "actor", "action", "entity", "entity_id", "payload", "at"] },
+  { table: "audit_log", key: "audit_log", pk: ["id"], cols: ["id", "actor", "action", "entity", "entity_id", "payload", "agent", "model", "at"] },
 ];
 
 export const rowKey = (def: TableDef, row: Record<string, unknown>) => def.pk.map((c) => String(row[c])).join("|");
