@@ -148,7 +148,7 @@ img, svg { max-width: 100%; }
 .bell-n { position: absolute; top: 2px; right: 1px; min-width: 17px; height: 17px; padding: 0 4px; border-radius: 99px; background: var(--sev-high); color: #fff; font-size: 10px; font-weight: 750; display: grid; place-items: center; line-height: 1; border: 2px solid #fff; }
 .user-btn { display: inline-flex; align-items: center; gap: 4px; padding: 3px; border: 0; background: none; cursor: pointer; border-radius: 12px; color: var(--ink-3); }
 .user-btn:hover { background: var(--tint); }
-.content { padding: 24px var(--gutter) 56px; max-width: 1480px; width: 100%; animation: rise .3s var(--ease); }
+.content { padding: 24px var(--gutter) 56px; max-width: 1680px; width: 100%; margin-inline: auto; animation: rise .3s var(--ease); }
 @keyframes rise { from { opacity: 0; } }
 
 /* ---------- Page header ---------- */
