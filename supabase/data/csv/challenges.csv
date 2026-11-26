@@ -1,0 +1,8 @@
+id,skill_id,prompt,approved_by,created_by
+ch-orion-1,sk-orion-1,A user asks for access to a shared mailbox without manager approval. Walk through how you handle the request.,u-tl-orion,ai
+ch-orion-2,sk-orion-2,"Three tickets report slow logins in 10 minutes. Decide priority, who you escalate to and what you write in the ticket.",u-tl-orion,ai
+ch-orion-3,sk-orion-3,Orion Portal and Helix are both down. List your first five steps and who you notify.,,ai
+ch-vega-1,sk-vega-2,"A production change fails validation at step 3. What do you check, and when do you roll back?",,ai
+ch-vega-2,sk-vega-1,"The morning batch check shows 3 failed jobs, one on a client-facing service. Which do you handle first and what do you record?",u-tl-vega,ai
+ch-aurora-1,sk-aurora-1,A ticket has been reopened twice by the same user. How do you find the root cause before replying?,u-tl-aurora,ai
+ch-pulse-1,sk-pulse-1,The nightly load finished but row counts are 40% lower than usual. What do you check before restarting it?,,ai

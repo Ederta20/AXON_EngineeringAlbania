@@ -1,0 +1,479 @@
+{
+  "items": [
+    {
+      "case_ref": "ONB-002",
+      "kind": "email",
+      "author_role": "lm",
+      "occurred_at": "2026-10-07",
+      "summary": "Requested Nova VPN, Orion Portal and Helix Service Desk accounts before project start. Project code NIM-482.",
+      "source_ref": "outlook://NIM-482/thread/access-request#msg-1"
+    },
+    {
+      "case_ref": "ONB-002",
+      "kind": "email",
+      "author_role": "access_support",
+      "occurred_at": "2026-10-14",
+      "summary": "Nova VPN active. Orion Portal awaiting application-owner approval. Helix Service Desk not provisioned.",
+      "source_ref": "outlook://NIM-482/thread/access-request#msg-2"
+    },
+    {
+      "case_ref": "ONB-005",
+      "kind": "tl_review",
+      "author_role": "tl",
+      "occurred_at": "2026-10-13",
+      "summary": "Completed first training topics. Handles standard requests with occasional support. Two complex scenarios still to cover.",
+      "source_ref": "outlook://ORI-330/thread/kt-weekly#2026-10-13",
+      "claimed_status": "ready_with_support"
+    },
+    {
+      "case_ref": "ONB-005",
+      "kind": "email",
+      "author_role": "lm",
+      "occurred_at": "2026-10-13",
+      "summary": "From the local side everything looks complete and Eva works independently. Considers onboarding closed.",
+      "source_ref": "outlook://ORI-330/thread/lm-progress#2026-10-13",
+      "claimed_status": "closed"
+    },
+    {
+      "case_ref": "ONB-009",
+      "kind": "email",
+      "author_role": "pmo",
+      "occurred_at": "2026-10-08",
+      "summary": "Asked the Technical Manager to confirm Lina's exact role, KT owner and expected readiness date. No reply recorded.",
+      "source_ref": "outlook://ONB-009/thread/role-confirmation#msg-1"
+    },
+    {
+      "case_ref": "ONB-010",
+      "kind": "checkin",
+      "author_role": "employee",
+      "occurred_at": "2026-10-14",
+      "summary": "Does daily standard activities alone. Still needs help with exceptions and production changes. All tools available. No date yet for the final readiness review.",
+      "source_ref": "teams://axon-bot/checkin/ONB-010/2026-10-14",
+      "claimed_status": "partially_ready"
+    },
+    {
+      "case_ref": "ONB-007",
+      "kind": "tracker",
+      "author_role": "pmo",
+      "occurred_at": "2026-09-20",
+      "summary": "Shadowing started; access expected next week. Status On Track.",
+      "source_ref": "tracker://onboarding.xlsx/row/ONB-007",
+      "claimed_status": "on_track"
+    },
+    {
+      "case_ref": "ONB-006",
+      "kind": "email",
+      "author_role": "kt_owner",
+      "occurred_at": "2026-10-11",
+      "summary": "Training guide and runbook are in /Team/Operations/Onboarding. Project-owned; keep only the folder reference.",
+      "source_ref": "outlook://ATL-512/thread/docs-location#msg-1"
+    },
+    {
+      "case_ref": "ONB-001",
+      "kind": "tracker",
+      "author_role": "pmo",
+      "occurred_at": "2026-10-13",
+      "summary": "Status Shadowing.",
+      "source_ref": "tracker://onboarding.xlsx/row/ONB-001",
+      "claimed_status": "shadowing"
+    },
+    {
+      "case_ref": "ONB-003",
+      "kind": "tracker",
+      "author_role": "pmo",
+      "occurred_at": "2026-09-30",
+      "summary": "Status On Track. Project column empty.",
+      "source_ref": "tracker://onboarding.xlsx/row/ONB-003",
+      "claimed_status": "on_track"
+    },
+    {
+      "case_ref": "ONB-004",
+      "kind": "tracker",
+      "author_role": "pmo",
+      "occurred_at": "2026-10-11",
+      "summary": "Status KT Started. Manager column empty.",
+      "source_ref": "tracker://onboarding.xlsx/row/ONB-004",
+      "claimed_status": "kt_started"
+    },
+    {
+      "case_ref": "ONB-006",
+      "kind": "tracker",
+      "author_role": "pmo",
+      "occurred_at": "2026-10-12",
+      "summary": "Status Pre-Onboarding.",
+      "source_ref": "tracker://onboarding.xlsx/row/ONB-006",
+      "claimed_status": "pre_onboarding"
+    },
+    {
+      "case_ref": "ONB-008",
+      "kind": "tracker",
+      "author_role": "pmo",
+      "occurred_at": "2026-10-14",
+      "summary": "Status Blocked. No reason or owner given.",
+      "source_ref": "tracker://onboarding.xlsx/row/ONB-008",
+      "claimed_status": "blocked"
+    },
+    {
+      "case_ref": "ONB-009",
+      "kind": "tracker",
+      "author_role": "pmo",
+      "occurred_at": "2026-10-09",
+      "summary": "Status KT Started. Project column empty.",
+      "source_ref": "tracker://onboarding.xlsx/row/ONB-009",
+      "claimed_status": "kt_started"
+    },
+    {
+      "case_ref": "ONB-005",
+      "kind": "task",
+      "author_role": "tl",
+      "occurred_at": "2026-09-29",
+      "summary": "Resolved 6 standard requests with a reviewer",
+      "source_ref": "tasklog://ONB-005/ev-t-005-1",
+      "scope": "Standard service requests",
+      "support_level": "supported"
+    },
+    {
+      "case_ref": "ONB-005",
+      "kind": "task",
+      "author_role": "tl",
+      "occurred_at": "2026-10-02",
+      "summary": "Resolved 9 standard requests alone, no rework",
+      "source_ref": "tasklog://ONB-005/ev-t-005-2",
+      "scope": "Standard service requests",
+      "support_level": "independent"
+    },
+    {
+      "case_ref": "ONB-005",
+      "kind": "task",
+      "author_role": "tl",
+      "occurred_at": "2026-10-06",
+      "summary": "Triaged 4 incidents with guidance",
+      "source_ref": "tasklog://ONB-005/ev-t-005-3",
+      "scope": "Incident triage",
+      "support_level": "supported"
+    },
+    {
+      "case_ref": "ONB-005",
+      "kind": "task",
+      "author_role": "tl",
+      "occurred_at": "2026-10-08",
+      "summary": "Triaged 5 incidents alone; escalated 1 correctly",
+      "source_ref": "tasklog://ONB-005/ev-t-005-4",
+      "scope": "Incident triage",
+      "support_level": "independent"
+    },
+    {
+      "case_ref": "ONB-005",
+      "kind": "task",
+      "author_role": "tl",
+      "occurred_at": "2026-10-09",
+      "summary": "Resolved 11 standard requests alone",
+      "source_ref": "tasklog://ONB-005/ev-t-005-5",
+      "scope": "Standard service requests",
+      "support_level": "independent"
+    },
+    {
+      "case_ref": "ONB-005",
+      "kind": "task",
+      "author_role": "tl",
+      "occurred_at": "2026-10-10",
+      "summary": "Joined outage drill; ran steps 1-4 with TL guiding",
+      "source_ref": "tasklog://ONB-005/ev-t-005-6",
+      "scope": "Complex scenario: multi-system outage",
+      "support_level": "supported"
+    },
+    {
+      "case_ref": "ONB-005",
+      "kind": "task",
+      "author_role": "tl",
+      "occurred_at": "2026-10-12",
+      "summary": "Wrote shift handover notes alone for 3 shifts",
+      "source_ref": "tasklog://ONB-005/ev-t-005-7",
+      "scope": "Reporting and shift handover",
+      "support_level": "independent"
+    },
+    {
+      "case_ref": "ONB-001",
+      "kind": "task",
+      "author_role": "tl",
+      "occurred_at": "2026-10-08",
+      "summary": "Observed ticket handling session",
+      "source_ref": "tasklog://ONB-001/ev-t-001-1",
+      "scope": "Aurora ticket handling",
+      "support_level": "shadowing"
+    },
+    {
+      "case_ref": "ONB-001",
+      "kind": "task",
+      "author_role": "tl",
+      "occurred_at": "2026-10-12",
+      "summary": "Observed knowledge base update",
+      "source_ref": "tasklog://ONB-001/ev-t-001-2",
+      "scope": "Knowledge base upkeep",
+      "support_level": "shadowing"
+    },
+    {
+      "case_ref": "ONB-004",
+      "kind": "task",
+      "author_role": "tl",
+      "occurred_at": "2026-10-08",
+      "summary": "Observed automation framework walkthrough",
+      "source_ref": "tasklog://ONB-004/ev-t-004-1",
+      "scope": "Test automation framework",
+      "support_level": "shadowing"
+    },
+    {
+      "case_ref": "ONB-004",
+      "kind": "task",
+      "author_role": "tl",
+      "occurred_at": "2026-10-10",
+      "summary": "Ran regression suite with reviewer",
+      "source_ref": "tasklog://ONB-004/ev-t-004-2",
+      "scope": "Helios regression suite",
+      "support_level": "supported"
+    },
+    {
+      "case_ref": "ONB-007",
+      "kind": "task",
+      "author_role": "tl",
+      "occurred_at": "2026-09-18",
+      "summary": "Observed monitoring shift",
+      "source_ref": "tasklog://ONB-007/ev-t-007-1",
+      "scope": "Network monitoring",
+      "support_level": "shadowing"
+    },
+    {
+      "case_ref": "ONB-008",
+      "kind": "task",
+      "author_role": "tl",
+      "occurred_at": "2026-10-08",
+      "summary": "Fixed a pipeline job with guidance",
+      "source_ref": "tasklog://ONB-008/ev-t-008-1",
+      "scope": "Pulse data pipelines",
+      "support_level": "supported"
+    },
+    {
+      "case_ref": "ONB-008",
+      "kind": "task",
+      "author_role": "tl",
+      "occurred_at": "2026-10-10",
+      "summary": "Built a dashboard tile under review",
+      "source_ref": "tasklog://ONB-008/ev-t-008-2",
+      "scope": "Reporting dashboards",
+      "support_level": "supported"
+    },
+    {
+      "case_ref": "ONB-009",
+      "kind": "task",
+      "author_role": "tl",
+      "occurred_at": "2026-10-09",
+      "summary": "Observed team standup and ticket flow",
+      "source_ref": "tasklog://ONB-009/ev-t-009-1",
+      "scope": "Onboarding basics",
+      "support_level": "shadowing"
+    },
+    {
+      "case_ref": "ONB-010",
+      "kind": "task",
+      "author_role": "tl",
+      "occurred_at": "2026-10-06",
+      "summary": "Ran daily checks alone for a week",
+      "source_ref": "tasklog://ONB-010/ev-t-010-1",
+      "scope": "Daily standard activities",
+      "support_level": "independent"
+    },
+    {
+      "case_ref": "ONB-010",
+      "kind": "task",
+      "author_role": "tl",
+      "occurred_at": "2026-10-09",
+      "summary": "Handled 2 exceptions with support",
+      "source_ref": "tasklog://ONB-010/ev-t-010-2",
+      "scope": "Exception handling",
+      "support_level": "supported"
+    },
+    {
+      "case_ref": "ONB-010",
+      "kind": "task",
+      "author_role": "tl",
+      "occurred_at": "2026-10-13",
+      "summary": "Prepared a production change with TL review",
+      "source_ref": "tasklog://ONB-010/ev-t-010-3",
+      "scope": "Production changes",
+      "support_level": "supported"
+    },
+    {
+      "case_ref": "ONB-011",
+      "kind": "task",
+      "author_role": "tl",
+      "occurred_at": "2026-09-01",
+      "summary": "Ran daily checks with review",
+      "source_ref": "tasklog://ONB-011/ev-t-011-1",
+      "scope": "Daily standard activities",
+      "support_level": "supported"
+    },
+    {
+      "case_ref": "ONB-011",
+      "kind": "task",
+      "author_role": "tl",
+      "occurred_at": "2026-09-10",
+      "summary": "Ran daily checks alone for a week",
+      "source_ref": "tasklog://ONB-011/ev-t-011-2",
+      "scope": "Daily standard activities",
+      "support_level": "independent"
+    },
+    {
+      "case_ref": "ONB-011",
+      "kind": "task",
+      "author_role": "tl",
+      "occurred_at": "2026-09-16",
+      "summary": "Handled 4 exceptions alone; escalated 1 correctly",
+      "source_ref": "tasklog://ONB-011/ev-t-011-3",
+      "scope": "Exception handling",
+      "support_level": "independent"
+    },
+    {
+      "case_ref": "ONB-011",
+      "kind": "task",
+      "author_role": "tl",
+      "occurred_at": "2026-09-22",
+      "summary": "Prepared and ran 2 production changes alone",
+      "source_ref": "tasklog://ONB-011/ev-t-011-4",
+      "scope": "Production changes",
+      "support_level": "independent"
+    },
+    {
+      "case_ref": "ONB-011",
+      "kind": "tl_review",
+      "author_role": "tl",
+      "occurred_at": "2026-09-25",
+      "summary": "All three scopes done alone with correct escalation. Ready.",
+      "source_ref": "teams://vega-kt/review/ONB-011",
+      "claimed_status": "ready"
+    },
+    {
+      "case_ref": "ONB-012",
+      "kind": "task",
+      "author_role": "tl",
+      "occurred_at": "2026-09-24",
+      "summary": "Resolved 10 standard requests alone",
+      "source_ref": "tasklog://ONB-012/ev-t-012-1",
+      "scope": "Standard service requests",
+      "support_level": "independent"
+    },
+    {
+      "case_ref": "ONB-012",
+      "kind": "task",
+      "author_role": "tl",
+      "occurred_at": "2026-10-01",
+      "summary": "Triaged 6 incidents alone; escalated 2 correctly",
+      "source_ref": "tasklog://ONB-012/ev-t-012-2",
+      "scope": "Incident triage",
+      "support_level": "independent"
+    },
+    {
+      "case_ref": "ONB-012",
+      "kind": "task",
+      "author_role": "tl",
+      "occurred_at": "2026-10-07",
+      "summary": "Outage drill with TL guiding steps 3-6",
+      "source_ref": "tasklog://ONB-012/ev-t-012-3",
+      "scope": "Complex scenario: multi-system outage",
+      "support_level": "supported"
+    },
+    {
+      "case_ref": "ONB-012",
+      "kind": "tl_review",
+      "author_role": "tl",
+      "occurred_at": "2026-10-09",
+      "summary": "Standard work and triage alone. Outage handling still needs guidance. Ready with Support.",
+      "source_ref": "outlook://ORI-330/thread/kt-weekly#2026-10-09",
+      "claimed_status": "ready_with_support"
+    },
+    {
+      "case_ref": "ONB-012",
+      "kind": "email",
+      "author_role": "lm",
+      "occurred_at": "2026-10-10",
+      "summary": "Agrees with the TL: operational on standard work, still supported on outages.",
+      "source_ref": "outlook://ORI-330/thread/lm-progress#2026-10-10",
+      "claimed_status": "ready_with_support"
+    },
+    {
+      "case_ref": "ONB-013",
+      "kind": "checkin",
+      "author_role": "employee",
+      "occurred_at": "2026-10-13",
+      "summary": "Sender 'Mira S.' says the VPN connects. Name is close to Mila Rowan (ONB-001), so the case match is low confidence.",
+      "source_ref": "teams://axon-bot/dm/2026-10-13T09:12"
+    },
+    {
+      "case_ref": "ONB-014",
+      "kind": "task",
+      "author_role": "tl",
+      "occurred_at": "2026-10-05",
+      "summary": "Restarted a failed load with TL guidance",
+      "source_ref": "tasklog://ONB-014/ev-t-014-1",
+      "scope": "Pulse data pipelines",
+      "support_level": "supported"
+    },
+    {
+      "case_ref": "ONB-014",
+      "kind": "task",
+      "author_role": "tl",
+      "occurred_at": "2026-10-09",
+      "summary": "Fixed a schema drift issue under review",
+      "source_ref": "tasklog://ONB-014/ev-t-014-2",
+      "scope": "Pulse data pipelines",
+      "support_level": "supported"
+    },
+    {
+      "case_ref": "ONB-014",
+      "kind": "task",
+      "author_role": "tl",
+      "occurred_at": "2026-10-06",
+      "summary": "Observed dashboard refresh process",
+      "source_ref": "tasklog://ONB-014/ev-t-014-3",
+      "scope": "Reporting dashboards",
+      "support_level": "shadowing"
+    },
+    {
+      "case_ref": "ONB-015",
+      "kind": "task",
+      "author_role": "tl",
+      "occurred_at": "2026-10-06",
+      "summary": "Resolved 5 standard requests with a reviewer",
+      "source_ref": "tasklog://ONB-015/ev-t-015-1",
+      "scope": "Standard service requests",
+      "support_level": "supported"
+    },
+    {
+      "case_ref": "ONB-015",
+      "kind": "task",
+      "author_role": "tl",
+      "occurred_at": "2026-10-10",
+      "summary": "Resolved 7 standard requests, 1 reworked",
+      "source_ref": "tasklog://ONB-015/ev-t-015-2",
+      "scope": "Standard service requests",
+      "support_level": "supported"
+    },
+    {
+      "case_ref": "ONB-015",
+      "kind": "task",
+      "author_role": "tl",
+      "occurred_at": "2026-10-07",
+      "summary": "Observed incident triage shift",
+      "source_ref": "tasklog://ONB-015/ev-t-015-3",
+      "scope": "Incident triage",
+      "support_level": "shadowing"
+    },
+    {
+      "case_ref": "ONB-016",
+      "kind": "email",
+      "author_role": "hr",
+      "occurred_at": "2026-10-13",
+      "summary": "Start 19 Oct confirmed: Atlas, Operations Analyst, Maya Ford (LM), Ben Royce (TL and KT owner).",
+      "source_ref": "outlook://ATL-512/thread/new-start-jonah#msg-1"
+    }
+  ]
+}

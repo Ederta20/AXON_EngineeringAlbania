@@ -1,0 +1,10 @@
+node_modules
+.next
+out
+.env*
+!.env.example
+*.log
+.DS_Store
+tsconfig.tsbuildinfo
+# path collector reports (summaries of private documents)
+collect-report-*.json

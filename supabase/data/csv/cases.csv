@@ -1,0 +1,21 @@
+id,employee_id,movement_type,project_id,role,path_id,line_manager_id,tl_id,start_date,expected_ready_date,stage,outcome,tracker_status,tracker_updated_at,profile_id,seniority
+ONB-001,u-e-001,new_hire,p-aurora,Support Analyst,pa-aurora,u-lm-jon,u-tl-aurora,2026-10-05,,in_kt,,Shadowing,2026-10-13,wp-newhire,junior
+ONB-002,u-e-002,reallocation,p-nimbus,Integration Developer,pa-nimbus,u-lm-sara,u-tl-nimbus,2026-10-07,2026-11-06,setup,,Access Pending,2026-10-14,wp-transfer,mid
+ONB-003,u-e-003,new_hire,,,,u-lm-tomas,,2026-09-28,,pre_onboarding,,On Track,2026-09-30,wp-newhire,junior
+ONB-004,u-e-004,reallocation,p-helios,QA Engineer,pa-helios,,,2026-10-01,2026-11-12,in_kt,,KT Started,2026-10-11,wp-transfer,mid
+ONB-005,u-e-005,new_hire,p-orion,Service Desk Analyst,pa-orion,u-lm-luca,u-tl-orion,2026-09-21,2026-10-30,awaiting_validation,,Ready with Support,2026-10-13,wp-default,mid
+ONB-006,u-e-006,new_hire,p-atlas,Operations Analyst,pa-atlas,u-lm-maya,u-tl-atlas,2026-10-12,2026-11-20,pre_onboarding,,Pre-Onboarding,2026-10-12,wp-newhire,junior
+ONB-007,u-e-007,reallocation,p-nova,Network Engineer,pa-nova,u-lm-rita,u-tl-nova,2026-09-15,2026-10-24,in_kt,,On Track,2026-09-20,wp-transfer,mid
+ONB-008,u-e-008,new_hire,p-pulse,Data Analyst,pa-pulse,u-lm-mark,u-tl-pulse,2026-10-03,2026-11-13,in_kt,,Blocked,2026-10-14,wp-newhire,junior
+ONB-009,u-e-009,reallocation,,,,u-lm-nina,,2026-10-06,,in_kt,,KT Started,2026-10-09,wp-transfer,mid
+ONB-010,u-e-010,new_hire,p-vega,Application Support Engineer,pa-vega,u-lm-alex,u-tl-vega,2026-09-29,,in_kt,,Partially Ready,2026-10-14,wp-newhire,junior
+ONB-011,u-e-011,upskill,p-vega,Application Support Engineer,pa-vega,u-lm-alex,u-tl-vega,2026-08-17,2026-09-25,closed,ready,Closed,2026-09-28,wp-upskill,mid
+ONB-012,u-e-012,new_hire,p-orion,Service Desk Analyst,pa-orion,u-lm-luca,u-tl-orion,2026-09-07,2026-10-16,outcome,ready_with_support,Ready with Support,2026-10-10,wp-default,mid
+ONB-013,u-e-013,new_hire,p-nimbus,Integration Developer,pa-nimbus,u-lm-sara,u-tl-nimbus,2026-10-12,2026-11-20,setup,,Setup,2026-10-13,wp-default,senior
+ONB-014,u-e-014,reallocation,p-pulse,Data Analyst,pa-pulse,u-lm-mark,u-tl-pulse,2026-09-22,2026-10-30,in_kt,,KT Started,2026-10-12,wp-transfer,mid
+ONB-015,u-e-015,new_hire,p-orion,Service Desk Analyst,pa-orion,u-lm-luca,u-tl-orion,2026-09-28,2026-11-06,in_kt,,On Track,2026-10-13,wp-newhire,junior
+ONB-016,u-e-016,new_hire,p-atlas,Operations Analyst,pa-atlas,u-lm-maya,u-tl-atlas,2026-10-19,2026-11-27,pre_onboarding,,Pre-Onboarding,2026-10-13,wp-newhire,junior
+ONB-017,u-e-017,reallocation,p-aurora,Support Analyst,pa-aurora,u-lm-jon,u-tl-aurora,2026-10-05,2026-11-04,in_kt,,Shadowing,2026-10-14,wp-transfer,mid
+ONB-018,u-e-018,new_hire,p-nova,Network Engineer,pa-nova,u-lm-rita,u-tl-nova,2026-09-29,2026-11-06,in_kt,,KT Started,2026-10-13,wp-newhire,junior
+ONB-019,u-e-019,new_hire,p-aurora,Support Analyst,pa-aurora,u-lm-jon,u-tl-aurora,2026-09-14,2026-10-23,in_kt,,On Track,2026-10-10,wp-newhire,junior
+ONB-020,u-e-020,reallocation,p-nimbus,Integration Developer,pa-nimbus,u-lm-sara,u-tl-nimbus,2026-10-01,2026-11-10,in_kt,,Blocked,2026-10-13,wp-transfer,mid

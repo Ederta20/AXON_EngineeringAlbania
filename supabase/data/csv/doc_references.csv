@@ -1,0 +1,10 @@
+id,project_id,path_id,title,folder_ref,owner_label,verified_at
+doc-atlas-1,p-atlas,pa-atlas,Atlas training guide,/Team/Operations/Onboarding,Ben Royce (KT owner),2026-10-11
+doc-atlas-2,p-atlas,pa-atlas,Atlas runbook,/Team/Operations/Onboarding,Ben Royce (KT owner),2026-10-11
+doc-orion-1,p-orion,pa-orion,Orion service desk playbook,/Orion/ServiceDesk/KT,Ada Quinn,2026-09-20
+doc-orion-2,p-orion,pa-orion,Major incident procedure,/Orion/ServiceDesk/Incidents,Ada Quinn,
+doc-vega-1,p-vega,pa-vega,Vega change process,/Vega/Support/Changes,Rhea Vance,2026-09-30
+doc-nimbus-1,p-nimbus,pa-nimbus,Nimbus integration overview,/Nimbus/Engineering/Onboarding,Petra Lind,2026-10-01
+doc-aurora-1,p-aurora,pa-aurora,Aurora ticket handling guide,/Aurora/Support/KT,Kai Brennan,2026-10-02
+doc-pulse-1,p-pulse,pa-pulse,Pulse pipeline runbook,/Pulse/Data/Runbooks,Ivo Sand,
+doc-nova-1,p-nova,pa-nova,Nova NOC monitoring handbook,/Nova/Network/NOC,Cleo Marsh,2026-09-12
