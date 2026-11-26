@@ -1,0 +1,21 @@
+id,case_id,scope_id,tl_id,proposed_level,proposed_by,evidence_ids,confidence,rationale,decided_level,reason,decided_at,decided_by
+va-005-1,ONB-005,s-005-1,u-tl-orion,independent,ai,"{""ev-t-005-1"",""ev-t-005-2"",""ev-t-005-5""}",0.88,"Two runs alone with no rework since 2 Oct, after one supported run.",,,,
+va-005-2,ONB-005,s-005-2,u-tl-orion,independent,ai,"{""ev-t-005-3"",""ev-t-005-4""}",0.76,One run alone with a correct escalation after one supported run.,,,,
+va-005-3,ONB-005,s-005-3,u-tl-orion,supported,ai,"{""ev-t-005-6"",""ev-email-3""}",0.71,Ran the outage drill with guidance. The TL review says this scenario is not covered yet.,,,,
+va-005-4,ONB-005,s-005-4,u-tl-orion,shadowing,ai,"{""ev-email-3""}",0.64,No task evidence. The TL review says this scenario is still to cover.,,,,
+va-005-5,ONB-005,s-005-5,u-tl-orion,independent,ai,"{""ev-t-005-7""}",0.8,Handover notes written alone for 3 shifts.,,,,
+va-010-1,ONB-010,s-010-1,u-tl-vega,independent,ai,"{""ev-t-010-1"",""ev-update-6""}",0.74,A week of daily checks alone; self-report agrees.,,,,
+va-010-2,ONB-010,s-010-2,u-tl-vega,supported,ai,"{""ev-t-010-2"",""ev-update-6""}",0.7,Exceptions handled with support; self-report says help still needed.,,,,
+va-010-3,ONB-010,s-010-3,u-tl-vega,supported,ai,"{""ev-t-010-3"",""ev-update-6""}",0.69,Production change prepared under TL review.,,,,
+va-008-1,ONB-008,s-008-1,u-tl-pulse,supported,ai,"{""ev-t-008-1"",""ev-t-008-2""}",0.62,Pipeline fix done with guidance; one dashboard reworked.,,,,
+va-011-1,ONB-011,s-011-1,u-tl-vega,independent,ai,"{""ev-t-011-1"",""ev-t-011-2""}",0.9,A week of daily checks alone after one supported run.,validated,Observed alone for a week.,2026-09-22,u-tl-vega
+va-011-2,ONB-011,s-011-2,u-tl-vega,independent,ai,"{""ev-t-011-3""}",0.84,Exceptions handled alone with a correct escalation.,validated,Correct escalation seen.,2026-09-24,u-tl-vega
+va-011-3,ONB-011,s-011-3,u-tl-vega,independent,ai,"{""ev-t-011-4""}",0.82,Two production changes alone.,validated,"Changes reviewed after the fact, no issues.",2026-09-25,u-tl-vega
+va-012-1,ONB-012,s-012-1,u-tl-orion,independent,ai,"{""ev-t-012-1""}",0.9,"Ten standard requests alone, no rework.",validated,Matches what I saw.,2026-10-08,u-tl-orion
+va-012-2,ONB-012,s-012-2,u-tl-orion,independent,ai,"{""ev-t-012-2""}",0.82,Six incidents alone with two correct escalations.,validated,Matches what I saw.,2026-10-08,u-tl-orion
+va-012-3,ONB-012,s-012-3,u-tl-orion,independent,ai,"{""ev-t-012-3""}",0.58,Drill completed; steps 3-6 done.,supported,"I guided steps 3-6, so he is not yet independent on outages.",2026-10-09,u-tl-orion
+va-014-1,ONB-014,s-014-1,u-tl-pulse,supported,ai,"{""ev-t-014-1"",""ev-t-014-2""}",0.66,"Two pipeline tasks under review, one reworked.",,,,
+va-015-1,ONB-015,s-015-1,u-tl-orion,supported,ai,"{""ev-t-015-1"",""ev-t-015-2""}",0.7,Standard requests with a reviewer; one rework.,,,,
+va-017-1,ONB-017,s-017-1,u-tl-aurora,supported,ai,"{""ev-t-017-1"",""ev-t-017-2""}",0.68,Moved from shadowing to supported tickets this week.,,,,
+va-017-2,ONB-017,s-017-2,u-tl-aurora,shadowing,ai,"{""ev-t-017-3""}",0.72,Only observed so far.,,,,
+va-018-1,ONB-018,s-018-1,u-tl-nova,supported,ai,"{""ev-t-018-1"",""ev-t-018-2""}",0.67,One monitoring shift with review.,,,,

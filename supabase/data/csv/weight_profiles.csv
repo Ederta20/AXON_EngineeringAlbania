@@ -1,0 +1,5 @@
+id,name,w_work,w_tl,w_1on1_human,w_1on1_ai,w_challenge,w_self,version,active
+wp-default,Default,35,30,10,5,15,5,1,true
+wp-transfer,"Transferee, similar skills",40,30,10,5,10,5,1,true
+wp-newhire,"New hire, junior",30,30,13,7,15,5,1,true
+wp-upskill,"Upskill, same project",40,35,7,3,10,5,1,true

@@ -1,0 +1,15 @@
+id,path_id,name,doc_ref,coverage,last_updated
+sk-orion-1,pa-orion,Standard service requests,doc-orion-1,90,2026-09-20
+sk-orion-2,pa-orion,Incident triage and escalation,doc-orion-2,70,2026-09-20
+sk-orion-3,pa-orion,Multi-system outage handling,doc-orion-2,40,2026-08-02
+sk-orion-4,pa-orion,Bulk data correction,,0,2026-08-02
+sk-atlas-1,pa-atlas,Daily operations checklist,doc-atlas-2,85,2026-10-11
+sk-atlas-2,pa-atlas,Runbook procedures,doc-atlas-2,80,2026-10-11
+sk-vega-1,pa-vega,Daily standard activities,doc-vega-1,75,2026-09-30
+sk-vega-2,pa-vega,Production changes,doc-vega-1,60,2026-09-30
+sk-vega-3,pa-vega,Exception handling,,20,2026-09-30
+sk-nimbus-1,pa-nimbus,Integration flows,doc-nimbus-1,65,2026-10-01
+sk-aurora-1,pa-aurora,Ticket handling,doc-aurora-1,80,2026-10-02
+sk-aurora-2,pa-aurora,Knowledge base upkeep,,10,2026-10-02
+sk-pulse-1,pa-pulse,Pipeline operations,doc-pulse-1,55,2026-09-25
+sk-nova-1,pa-nova,Network monitoring,doc-nova-1,70,2026-09-12

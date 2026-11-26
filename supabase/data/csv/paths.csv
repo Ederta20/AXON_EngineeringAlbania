@@ -1,0 +1,9 @@
+id,project_id,role_name
+pa-aurora,p-aurora,Support Analyst
+pa-nimbus,p-nimbus,Integration Developer
+pa-helios,p-helios,QA Engineer
+pa-orion,p-orion,Service Desk Analyst
+pa-atlas,p-atlas,Operations Analyst
+pa-nova,p-nova,Network Engineer
+pa-pulse,p-pulse,Data Analyst
+pa-vega,p-vega,Application Support Engineer

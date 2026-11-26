@@ -1,0 +1,43 @@
+id,name,email,role,title,project_id,case_id
+u-pmo,Sam Ortiz,sam.ortiz@example.test,pmo,PMO Coordinator,,
+u-hr,Hana Brooks,hana.brooks@example.test,hr,HR Partner,,
+u-mgmt,Erin Shaw,erin.shaw@example.test,mgmt,Delivery Director,,
+u-cm,Marco Fenn,marco.fenn@example.test,core_manager,"Core Manager, Orion and Vega",,
+u-admin,Tess Albright,tess.albright@example.test,admin,Platform Admin,,
+u-tl-aurora,Kai Brennan,kai.brennan@example.test,tl,"Tech Lead, Aurora",p-aurora,
+u-tl-nimbus,Petra Lind,petra.lind@example.test,tl,"Tech Lead, Nimbus",p-nimbus,
+u-tl-orion,Ada Quinn,ada.quinn@example.test,tl,"Tech Lead, Orion",p-orion,
+u-tl-atlas,Ben Royce,ben.royce@example.test,tl,"Tech Lead and KT owner, Atlas",p-atlas,
+u-tl-nova,Cleo Marsh,cleo.marsh@example.test,tl,"Tech Lead, Nova",p-nova,
+u-tl-pulse,Ivo Sand,ivo.sand@example.test,tl,"Tech Lead, Pulse",p-pulse,
+u-tl-vega,Rhea Vance,rhea.vance@example.test,tl,"Tech Lead, Vega",p-vega,
+u-tm,Dario Wells,dario.wells@example.test,tl,Technical Manager,,
+u-lm-jon,Jon Vale,jon.vale@example.test,lm,Line Manager,,
+u-lm-sara,Sara Neri,sara.neri@example.test,lm,"Project Manager, Nimbus",,
+u-lm-tomas,Tomas Reed,tomas.reed@example.test,lm,Line Manager,,
+u-lm-luca,Luca Gray,luca.gray@example.test,lm,Line Manager,,
+u-lm-maya,Maya Ford,maya.ford@example.test,lm,Line Manager,,
+u-lm-rita,Rita Cole,rita.cole@example.test,lm,Line Manager,,
+u-lm-mark,Mark Hale,mark.hale@example.test,lm,Line Manager,,
+u-lm-nina,Nina Cross,nina.cross@example.test,lm,Line Manager,,
+u-lm-alex,Alex North,alex.north@example.test,lm,Line Manager,,
+u-e-001,Mila Rowan,mila.rowan@example.test,employee,Support Analyst,,ONB-001
+u-e-002,Leo Marin,leo.marin@example.test,employee,Integration Developer,,ONB-002
+u-e-003,Nora Venn,nora.venn@example.test,employee,Role not confirmed,,ONB-003
+u-e-004,Aron Bell,aron.bell@example.test,employee,QA Engineer,,ONB-004
+u-e-005,Eva Stone,eva.stone@example.test,employee,Service Desk Analyst,,ONB-005
+u-e-006,Noah Lane,noah.lane@example.test,employee,Operations Analyst,,ONB-006
+u-e-007,Iris Moon,iris.moon@example.test,employee,Network Engineer,,ONB-007
+u-e-008,Theo Park,theo.park@example.test,employee,Data Analyst,,ONB-008
+u-e-009,Lina West,lina.west@example.test,employee,Role not confirmed,,ONB-009
+u-e-010,Owen Hart,owen.hart@example.test,employee,Application Support Engineer,,ONB-010
+u-e-011,Sofia Kerr,sofia.kerr@example.test,employee,Application Support Engineer,,ONB-011
+u-e-012,Dan Holt,dan.holt@example.test,employee,Service Desk Analyst,,ONB-012
+u-e-013,Mira Solis,mira.solis@example.test,employee,Integration Developer,,ONB-013
+u-e-014,Tariq Neal,tariq.neal@example.test,employee,Data Analyst,,ONB-014
+u-e-015,Elena Brandt,elena.brandt@example.test,employee,Service Desk Analyst,,ONB-015
+u-e-016,Jonah Reyes,jonah.reyes@example.test,employee,Operations Analyst,,ONB-016
+u-e-017,Priya Anand,priya.anand@example.test,employee,Support Analyst,,ONB-017
+u-e-018,Ruben Ortega,ruben.ortega@example.test,employee,Network Engineer,,ONB-018
+u-e-019,Wes Calder,wes.calder@example.test,employee,Support Analyst,,ONB-019
+u-e-020,Gia Moretti,gia.moretti@example.test,employee,Integration Developer,,ONB-020
