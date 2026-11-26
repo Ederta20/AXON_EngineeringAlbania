@@ -6,7 +6,7 @@
 //   - Model output passes                                   -> source "ai", status "ok".
 // So the demo never breaks, and routes never need to know whether the answer came from a model.
 //
-// generate() calls Gemini (@google/genai). To make another agent real, write its prompt in lib/ai/prompts.ts:
+// generate() calls Gemini (@google/genai). To make another agent real, write its prompt in spec/agents/prompts.ts:
 // prompts that still contain "TODO:" stay on the mock, so a half-written agent never slows the demo down.
 import { createHash } from "crypto";
 import { GoogleGenAI } from "@google/genai";
@@ -23,7 +23,7 @@ export const AGENT_NAMES: Record<AgentId, string> = {
 
 export interface AgentCall<T> {
   agent: AgentId;
-  system: string;          // the agent's prompt (lib/ai/prompts.ts)
+  system: string;          // the agent's prompt (spec/agents/prompts.ts)
   input: unknown;          // structured input; serialized as JSON for the model. Numbers and dates come from SQL, never from the model.
   schema: ZodType<T>;      // the output contract; also describe it in the prompt
   fallback: () => T;       // the mock answer used when the model is off or fails
@@ -55,8 +55,11 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
  * Calls Gemini and returns its JSON text plus the model that answered.
  * Rate limit (429), overloaded or slower than 20 s: retry once on GEMINI_FALLBACK_MODEL (if that is rate-limited too, wait 15 s once).
  */
-async function generate(system: string, user: string, model: string): Promise<{ text: string; model: string }> {
-  const once = async (m: string, timeout: number) => {
+async function generate(system: string, user: string, model: string, deadline: number): Promise<{ text: string; model: string }> {
+  const left = () => deadline - Date.now();
+  const once = async (m: string, cap: number) => {
+    const timeout = Math.min(cap, left());
+    if (timeout < 3_000) throw new Error("out of time");
     const r = await ai().models.generateContent({
       model: m, contents: user,
       config: { systemInstruction: system, responseMimeType: "application/json", temperature: 0.2, httpOptions: { timeout } },
@@ -72,14 +75,17 @@ async function generate(system: string, user: string, model: string): Promise<{ 
     // Quota used up, overloaded or slow: the lighter model has its own quota, so switch to it.
     const next = model === fallback ? model : fallback;
     try {
-      return await once(next, 45_000);
+      return await once(next, 25_000);
     } catch (e2) {
-      if (!isRateLimit(e2)) throw e2;
-      await sleep(15_000); // both rate-limited: wait once
-      return once(next, 45_000);
+      if (!isRateLimit(e2) || left() < 20_000) throw e2;
+      await sleep(10_000); // both rate-limited: wait once, if there is time
+      return once(next, 25_000);
     }
   }
 }
+
+/** Whole callAgent budget: routes allow 60 s (maxDuration) and still need time to save. */
+const BUDGET_MS = 50_000;
 
 /** Small model for A1, A5, A6; larger for A2, A3, A9 (brief, Part 5). Override per agent with env vars if needed. */
 function modelFor(agent: AgentId) {
@@ -104,11 +110,17 @@ export async function callAgent<T>(call: AgentCall<T>): Promise<AgentResult<T>> 
 
   let model = modelFor(call.agent);
   let user = JSON.stringify(call.input);
-  for (let attempt = 0; attempt < 2; attempt++) {
+  const deadline = Date.now() + BUDGET_MS;
+  for (let attempt = 0; attempt < 2 && deadline - Date.now() > 5_000; attempt++) {
     try {
-      const res = await generate(call.system, user, model);
+      const res = await generate(call.system, user, model, deadline);
       model = res.model;
-      const parsed = call.schema.safeParse(JSON.parse(res.text));
+      let json: unknown;
+      try { json = JSON.parse(res.text); } catch {
+        user = `${JSON.stringify(call.input)}\n\nYour previous answer was not valid JSON. Answer again with one JSON object only.`;
+        continue;
+      }
+      const parsed = call.schema.safeParse(json);
       if (parsed.success) {
         if (useCache) await aiCache.upsert(key, { output: parsed.data, model });
         await logAudit({ actor: `agent:${call.agent}`, action: "ai_call", entity: "agents", entity_id: call.agent, agent, model, payload: { model, inputIds: call.inputIds ?? idsIn(call.input) } });

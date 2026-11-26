@@ -27,7 +27,7 @@ export async function verifyConnector(req: Request): Promise<{ connector: string
 }
 
 /** Wraps a handler so thrown Responses (401/503) are returned instead of crashing. */
-export const guard = (h: (req: Request, ctx: any) => Promise<Response>) => async (req: Request, ctx: any) => {
+export const guard = (h: (req: Request, ctx: any) => Promise<Response>) => async (req: Request, ctx?: any) => {
   try { return await h(req, ctx); } catch (e) {
     if (e instanceof Response) return e;
     if (e instanceof ZodError) return Response.json({ error: "invalid payload", issues: e.issues }, { status: 400 });

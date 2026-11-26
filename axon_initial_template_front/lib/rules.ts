@@ -35,7 +35,7 @@ export function detect(db: Db): Hit[] {
   const open = db.cases.filter((c) => c.stage !== "closed");
 
   for (const c of open) {
-    const ev = db.evidence.filter((e) => e.case_id === c.id);
+    const ev = db.evidence.filter((e) => e.case_id === c.id && e.status !== "needs_review"); // unreviewed AI matches never raise or clear flags
     const lastActivity = [c.tracker_updated_at, ...ev.filter((e) => e.kind !== "email" || e.author_role !== "pmo").map((e) => e.occurred_at)]
       .sort().reverse()[0];
 

@@ -1,6 +1,7 @@
 // A10 Requirements Assistant (Core-lite). POST /api/agents/requirements/parse {text, project_hint?, user_id}
 // Returns requirement cards or one clarifying question. Writes nothing: the manager confirms the cards and submits them
 // (POST /api/requirements/:id/submit), then the Admin approves. Only the structured result is stored, never the pasted text.
+import { guard } from "@/lib/server/verify";
 import { z } from "zod";
 import { getDb, json } from "@/lib/server/db";
 import { parseRequirement } from "@/lib/agents";
@@ -16,7 +17,7 @@ const Card = z.object({
 });
 const Out = z.object({ cards: z.array(Card), question: z.string().nullable() });
 
-export async function POST(req: Request) {
+export const POST = guard(async (req: Request) => {
   const b = z.object({ text: z.string().min(5).max(4000), project_hint: z.string().optional(), user_id: z.string().optional() }).parse(await req.json());
   const db = await getDb();
   const text = b.project_hint ? `${b.text} ${b.project_hint}` : b.text;
@@ -28,4 +29,4 @@ export async function POST(req: Request) {
   const ids = new Set(db.cases.map((c) => c.id));
   const cards = r.output.cards.map((c) => ({ ...c, affected_case_ids: c.affected_case_ids.filter((id) => ids.has(id)) }));
   return json({ source: r.source, status: r.status, proposed: true, cards, question: r.output.question });
-}
+});

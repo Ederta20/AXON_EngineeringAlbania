@@ -1,6 +1,7 @@
 // A8 Report Writer (Extra). POST /api/agents/report {audience: management | digest, user_id?}
 // Every number is computed here (the brief's SQL views); the model only words them. Writes nothing to the data.
 // Guardrail: if the text contains a number that is not in the input, it is rejected and the plain template is used.
+import { guard } from "@/lib/server/verify";
 import { z } from "zod";
 import { getDb, json } from "@/lib/server/db";
 import { computeScore } from "@/lib/score";
@@ -13,7 +14,7 @@ export const maxDuration = 60;
 
 const Out = z.object({ subject: z.string().max(120), text: z.string().max(2500) });
 
-export async function POST(req: Request) {
+export const POST = guard(async (req: Request) => {
   const { audience, user_id } = z.object({ audience: z.enum(["management", "digest"]), user_id: z.string().optional() }).parse(await req.json());
   const db = await getDb();
   const user = user_id ? db.users.find((u) => u.id === user_id) ?? null : null;
@@ -52,4 +53,4 @@ export async function POST(req: Request) {
   const ok = r.source === "ai" && stray.length === 0;
   const out = ok ? r.output : template();
   return json({ source: ok ? "ai" : "mock", status: stray.length ? "needs_review" : r.status, audience, numbers, ...out, ...(stray.length ? { rejected_numbers: stray } : {}) });
-}
+});

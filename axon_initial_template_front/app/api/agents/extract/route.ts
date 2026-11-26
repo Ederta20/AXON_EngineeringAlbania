@@ -1,8 +1,9 @@
 // A1 Evidence Extractor (Core). POST /api/agents/extract {source_kind, source_ref, text, received_at, case_hint?}
 // Writes: one evidence row per fact (extracted_by = ai), and proposed access states (access_items.proposed_state).
 // Low confidence (< 0.6) or no case match -> status needs_review for the PMO. The raw text is never stored, only the summary.
+import { guard } from "@/lib/server/verify";
 import { z } from "zod";
-import { getDb, json, save } from "@/lib/server/db";
+import { getDb, json, logAudit, save } from "@/lib/server/db";
 import { callAgent } from "@/lib/ai/callAgent";
 import { PROMPTS } from "@/lib/ai/prompts";
 import { afterEvidence, openFlagIds, READINESS_KINDS } from "@/lib/server/pipeline";
@@ -26,7 +27,8 @@ const Out = z.object({
   access_updates: z.array(z.object({ system: z.string(), proposed_state: z.enum(["requested", "approved", "usable"]) })),
 });
 
-export async function POST(req: Request) {
+export const POST = guard(async (req: Request) => {
+  const startedAt = Date.now();
   const b = In.parse(await req.json());
   const db = await getDb();
   const input = {
@@ -72,9 +74,12 @@ export async function POST(req: Request) {
       }
     }, { actor: r.agent, action: "extract_evidence", entity: "evidence", entity_id: ids.join(",") || "none", payload: { source_ref: b.source_ref, status }, agent: r.agent, model: r.model });
   }
+  // No case match: nothing can be saved as evidence, so the PMO gets it under "Needs review" (only A1's summaries, never the text).
+  if (!c) await logAudit({ actor: r.agent, action: "evidence_unmatched", entity: "evidence", entity_id: b.source_ref, agent: r.agent, model: r.model,
+    payload: { source_ref: b.source_ref, received_at: b.received_at, confidence: o.confidence, summaries: o.facts.map((f) => f.summary).slice(0, 5) } });
   // Brief pipeline: rules reran in save(); A2 explains new flags, A3 reassesses on readiness evidence.
   const pipeline = c && after && b.pipeline !== false && status === "ok"
-    ? await afterEvidence({ before, after, caseIds: [c.id], assessCaseIds: o.facts.some((f) => READINESS_KINDS.has(f.kind)) ? [c.id] : [] })
+    ? await afterEvidence({ before, after, caseIds: [c.id], assessCaseIds: o.facts.some((f) => READINESS_KINDS.has(f.kind)) ? [c.id] : [], startedAt })
     : null;
   return json({ source: r.source, status, proposed: true, evidence_ids: ids, ...o, pipeline });
-}
+});

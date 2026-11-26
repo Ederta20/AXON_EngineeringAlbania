@@ -7,6 +7,16 @@ import { POST as analyzeFlag } from "@/app/api/agents/analyze-flag/route";
 import { POST as assess } from "@/app/api/agents/assess/route";
 
 const MAX_FLAGS = 3;
+/** Routes may run 60 s (maxDuration). Follow-up agents only get the time that is left; they are proposals, so skipping is safe. */
+const ROUTE_LIMIT_MS = 55_000;
+const MIN_LEFT_MS = 15_000;
+
+/** Resolves with `fallback` when the route is about to run out of time. */
+export function withinRoute<T>(p: Promise<T>, startedAt: number, fallback: T): Promise<T> {
+  const left = ROUTE_LIMIT_MS - (Date.now() - startedAt);
+  if (left < MIN_LEFT_MS) return Promise.resolve(fallback);
+  return Promise.race([p, new Promise<T>((r) => setTimeout(() => r(fallback), left))]);
+}
 const MAX_CASES = 2;
 /** Evidence kinds that change readiness (brief, A3 trigger). */
 export const READINESS_KINDS = new Set(["task", "tl_review", "checkin", "one_on_one"]);
@@ -19,9 +29,13 @@ const call = (handler: (r: Request) => Promise<Response>, body: unknown) =>
 /** Open flag ids, to diff before and after a save. */
 export const openFlagIds = (db: Db) => new Set(db.flags.filter((f) => f.status === "open").map((f) => f.id));
 
-export interface PipelineResult { flags_explained: { flag_id: string; cause_class: string | null; source: string }[]; cases_assessed: { case_id: string; scopes: number; source: string }[] }
+export interface PipelineResult { skipped?: "no time left"; flags_explained: { flag_id: string; cause_class: string | null; source: string }[]; cases_assessed: { case_id: string; scopes: number; source: string }[] }
 
-export async function afterEvidence(opts: { before: Set<string>; after: Db; caseIds: string[]; assessCaseIds: string[] }): Promise<PipelineResult> {
+export async function afterEvidence(opts: { before: Set<string>; after: Db; caseIds: string[]; assessCaseIds: string[]; startedAt: number }): Promise<PipelineResult> {
+  return withinRoute(run(opts), opts.startedAt, { skipped: "no time left", flags_explained: [], cases_assessed: [] });
+}
+
+async function run(opts: { before: Set<string>; after: Db; caseIds: string[]; assessCaseIds: string[] }): Promise<PipelineResult> {
   const cases = new Set(opts.caseIds);
   const newFlags = opts.after.flags.filter((f) => f.status === "open" && !opts.before.has(f.id) && cases.has(f.case_id) && !f.cause_confirmed).slice(0, MAX_FLAGS);
   const toAssess = Array.from(new Set(opts.assessCaseIds)).slice(0, MAX_CASES);
