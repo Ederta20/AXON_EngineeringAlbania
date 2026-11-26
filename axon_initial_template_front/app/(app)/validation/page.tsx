@@ -3,7 +3,7 @@
 // Confirm, or override with a mandatory reason. Validating every core scope releases the score cap.
 import { useState } from "react";
 import Link from "next/link";
-import { ShieldCheck, ChevronDown, ChevronRight, Timer, Lock, Scale, CalendarPlus } from "lucide-react";
+import { ShieldCheck, ChevronDown, ChevronRight, Timer, Lock, Scale, CalendarPlus, Sparkles } from "lucide-react";
 import { useAxon } from "@/lib/store";
 import type { Outcome, ScopeLevel, Validation } from "@/lib/types";
 import { computeScore, scoreWith, tlGate } from "@/lib/score";
@@ -50,7 +50,17 @@ export default function ValidationQueue() {
 }
 
 function CaseBlock({ caseId, onToast }: { caseId: string; onToast: (m: string) => void }) {
-  const { db, setOutcome } = useAxon();
+  const { db, setOutcome, assessReadiness, aiLive } = useAxon();
+  const [assessing, setAssessing] = useState(false);
+  const runAssessment = async () => {
+    setAssessing(true);
+    try {
+      const r = await assessReadiness(caseId);
+      if (r.source === "mock") onToast(aiLive ? "AI unavailable: kept the current proposals" : "Demo mode: set NEXT_PUBLIC_DATA_SOURCE=api for live AI");
+      else onToast(`AI proposed levels for ${r.count} scope${r.count === 1 ? "" : "s"}${r.conflicts?.length ? `, ${r.conflicts.length} conflict${r.conflicts.length > 1 ? "s" : ""} noted` : ""}. You decide.`);
+    } catch (e) { console.error(e); onToast("The assessment failed. Try again."); }
+    finally { setAssessing(false); }
+  };
   const c = db.cases.find((x) => x.id === caseId)!;
   const emp = employee(db, c);
   const s = computeScore(db, caseId);
@@ -69,7 +79,9 @@ function CaseBlock({ caseId, onToast }: { caseId: string; onToast: (m: string) =
           <div>
             <div className="row gap6"><Link href={`/cases/${caseId}`} style={{ fontSize: 18, fontWeight: 720, color: "var(--midnight)" }}>{emp.name}</Link><span className="mono muted">{caseId}</span></div>
             <div className="small ink2">{project(db, c.project_id)?.name} · {c.role} · started {fmtDate(c.start_date)} · expected ready {fmtDate(c.expected_ready_date)}</div>
-            <div className="row gap6" style={{ marginTop: 6 }}><GateChip passed={gate.passed} validated={gate.validated} total={gate.total} />{c.outcome && <HumanChip who={userName(db, c.tl_id) ?? "TL"} label={`Outcome ${OUTCOME_LABEL[c.outcome]}`} />}</div>
+            <div className="row gap6" style={{ marginTop: 6 }}><GateChip passed={gate.passed} validated={gate.validated} total={gate.total} />{c.outcome && <HumanChip who={userName(db, c.tl_id) ?? "TL"} label={`Outcome ${OUTCOME_LABEL[c.outcome]}`} />}
+              {!c.outcome && <button className="btn sm" onClick={runAssessment} disabled={assessing} title="The Readiness Assessor (A3) reads the latest evidence and proposes a level per scope. Only you decide.">
+                <Sparkles size={13} />{assessing ? "AI is assessing…" : "Run AI assessment"}</button>}</div>
           </div>
         </div>
         <div className="row gap16 score-side">

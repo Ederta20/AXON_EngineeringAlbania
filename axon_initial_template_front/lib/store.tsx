@@ -18,11 +18,14 @@ let seq = 0;
 const uid = (p: string) => `${p}-${Date.now().toString(36)}${(seq++).toString(36)}`;
 
 type ReqCard = ReturnType<typeof a10>["cards"][number];
+/** What an agent button needs to tell the person: did the real model answer, and does a human need to check it. */
+export type AgentRun = { source: "ai" | "mock"; status: "ok" | "needs_review"; count?: number; conflicts?: string[] };
 
 interface Store {
   db: Db;
   user: User | null;
   ready: boolean;
+  aiLive: boolean;                                             // true in api mode: agent buttons call the real model
   login(userId: string): void;
   logout(): void;
   reset(): void;
@@ -34,6 +37,8 @@ interface Store {
   simulateReply(actionId: string): void;                       // POST /api/ingest/replies (mock connector)
   assignOwner(flagIds: string[], ownerLabel: string): void;     // PATCH /api/flags/:id
   confirmCause(flagId: string, cause: CauseClass): void;       // PATCH /api/flags/:id
+  analyzeFlag(flagId: string): Promise<AgentRun>;              // POST /api/agents/analyze-flag (A2)
+  assessReadiness(caseId: string): Promise<AgentRun>;          // POST /api/agents/assess (A3)
   resolveFlag(flagId: string, reason: string): void;           // PATCH /api/flags/:id {status: resolved}
   decideValidation(id: string, level: ScopeLevel, reason: string | null): void; // POST /api/validations/:id/decide
   setOutcome(caseId: string, outcome: Outcome, reason: string): void;          // POST /api/cases/:id/outcome
@@ -124,7 +129,7 @@ export function AxonProvider({ children }: { children: React.ReactNode }) {
   }, [actor, sync]);
 
   const store: Store = {
-    db, user, ready,
+    db, user, ready, aiLive: API,
     login: (id) => setUserId(id),
     logout: () => setUserId(null),
     reset: () => { if (API) loadFromServer().catch((e) => console.error(e)); else setDb(fresh()); }, // api mode: reload from the database
@@ -197,6 +202,26 @@ export function AxonProvider({ children }: { children: React.ReactNode }) {
           disputed: false, extracted_by: "manual", status: "ok" });
         for (const e of d.evidence) if (e.case_id === caseId && e.disputed) e.disputed = false;
       }, { action: "set_outcome", entity: "cases", entity_id: caseId, payload: { outcome, reason } });
+    },
+
+    async analyzeFlag(flagId) {
+      if (API) { // A2 proposes cause, owner and a sentence on the server; the PMO still confirms
+        const r = await postAgent<AgentRun>("/api/agents/analyze-flag", { flag_id: flagId });
+        await loadFromServer();
+        return r;
+      }
+      await wait(700); // mock mode: the seeded proposal is already shown
+      return { source: "mock", status: "ok" };
+    },
+
+    async assessReadiness(caseId) {
+      if (API) { // A3 proposes a level per scope on the server; only the TL decides
+        const r = await postAgent<{ source: "ai" | "mock"; status: "ok" | "needs_review"; scopes: unknown[]; conflicts: string[] }>("/api/agents/assess", { case_id: caseId });
+        await loadFromServer();
+        return { source: r.source, status: r.status, count: r.scopes.length, conflicts: r.conflicts };
+      }
+      await wait(900); // mock mode: the seeded proposals are already shown
+      return { source: "mock", status: "ok" };
     },
 
     async submitOneOnOne(caseId, rating, note) {
