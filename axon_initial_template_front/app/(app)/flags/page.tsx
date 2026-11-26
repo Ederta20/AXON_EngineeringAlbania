@@ -55,7 +55,7 @@ export default function FlagsBoard() {
         <Needed>Every high-severity flag has a follow-up. Check the ones waiting for a reply.</Needed>
       )}
 
-      <div className="grid" style={{ gridTemplateColumns: "minmax(0,1.1fr) minmax(0,1fr)", marginBottom: 16 }}>
+      <div className="grid split" style={{ gridTemplateColumns: "minmax(0,1.1fr) minmax(0,1fr)", marginBottom: 16 }}>
        <div className="grid g2">
         <Stat k="Open flags" v={flags.length} icon={<FlagIc size={14} />} d={`${flags.filter((f) => f.severity === "high").length} high severity`} />
         <Stat k="Average flag age" v={avgAge} unit="days" icon={<Hourglass size={14} />} d="Since the rule raised it" />
@@ -71,7 +71,7 @@ export default function FlagsBoard() {
       <div>
         <Card title="Open flags" sub={`${shown.length} of ${flags.length} shown. Raised by rules; causes proposed by AI until you confirm them.`} pad={false}
           action={
-            <div className="row gap6 wrap">
+            <div className="row gap6 wrap filters">
               <select className="select" style={{ width: 150, height: 32 }} value={type} onChange={(e) => setType(e.target.value as FlagType | "all")} aria-label="Filter by type">
                 <option value="all">All types</option>{FLAG_ORDER.map((t) => <option key={t} value={t}>{FLAG_LABEL[t]}</option>)}
               </select>
@@ -87,9 +87,9 @@ export default function FlagsBoard() {
             </div>
           }>
           {sel.length > 0 && !readOnly && (
-            <div className="row" style={{ padding: "12px 20px", background: "rgba(89,53,175,.06)", borderTop: "1px solid var(--line)", marginTop: 12 }}>
+            <div className="row wrap bulkbar" style={{ padding: "12px 20px", background: "rgba(89,53,175,.06)", borderTop: "1px solid var(--line)", marginTop: 12 }}>
               <UserRoundCog size={16} color="var(--violet)" /><b className="small">{sel.length} selected</b>
-              <select className="select" style={{ width: 240, height: 32 }} value={bulkOwner} onChange={(e) => setBulkOwner(e.target.value)} aria-label="New owner">
+              <select className="select" style={{ width: "min(240px, 100%)", height: 32 }} value={bulkOwner} onChange={(e) => setBulkOwner(e.target.value)} aria-label="New owner">
                 <option value="">Assign owner…</option>{ownerOptions.map((o) => <option key={o}>{o}</option>)}
               </select>
               <button className="btn sm primary" disabled={!bulkOwner} onClick={() => { assignOwner(sel, bulkOwner); setSel([]); setBulkOwner(""); }}>Assign</button>
@@ -98,7 +98,7 @@ export default function FlagsBoard() {
           )}
           <div style={{ overflowX: "auto", marginTop: sel.length ? 0 : 8 }}>
             {shown.length === 0 ? <Empty title="No open flags">{flags.length ? "Nothing matches these filters." : "Every onboarding is on track."}</Empty> : (
-              <table className="table">
+              <table className="table stack-sm">
                 <thead><tr>
                   {!readOnly && <th className="tight"><input type="checkbox" className="check" aria-label="Select all" checked={sel.length === allIds.length && allIds.length > 0} onChange={(e) => setSel(e.target.checked ? allIds : [])} /></th>}
                   <th>Employee</th><th>Flag</th><th>Cause class</th><th>Owner</th><th className="tight">Age</th><th className="tight">Severity</th><th className="tight">Follow-up</th>
@@ -111,10 +111,10 @@ export default function FlagsBoard() {
                     const late = f.due_at < TODAY;
                     return (
                       <tr key={f.id} className={`clickable ${sel.includes(f.id) ? "sel" : ""}`} onClick={() => router.push(`/cases/${c.id}?flag=${f.id}`)}>
-                        {!readOnly && <td onClick={(ev) => ev.stopPropagation()}><input type="checkbox" className="check" aria-label={`Select ${e.name}`} checked={sel.includes(f.id)} onChange={(ev) => setSel((s) => ev.target.checked ? [...s, f.id] : s.filter((x) => x !== f.id))} /></td>}
-                        <td style={{ minWidth: 170 }}><div className="row"><Avatar name={e.name} /><div><div className="strong nowrap">{e.name}</div><div className="xs muted"><span className="mono">{c.id}</span> · {project(db, c.project_id)?.name ?? "No project"}</div></div></div></td>
-                        <td style={{ maxWidth: 340 }}><FlagTag type={f.type} severity={f.severity} /><div className="small ink2" style={{ marginTop: 4 }}>{f.detail}</div></td>
-                        <td onClick={(ev) => ev.stopPropagation()}>
+                        {!readOnly && <td className="cell-check" onClick={(ev) => ev.stopPropagation()}><input type="checkbox" className="check" aria-label={`Select ${e.name}`} checked={sel.includes(f.id)} onChange={(ev) => setSel((s) => ev.target.checked ? [...s, f.id] : s.filter((x) => x !== f.id))} /></td>}
+                        <td className="cell-head" style={{ minWidth: 170 }}><div className="row"><Avatar name={e.name} /><div><div className="strong nowrap">{e.name}</div><div className="xs muted"><span className="mono">{c.id}</span> · {project(db, c.project_id)?.name ?? "No project"}</div></div></div></td>
+                        <td className="cell-full" style={{ maxWidth: 340 }}><FlagTag type={f.type} severity={f.severity} /><div className="small ink2" style={{ marginTop: 4 }}>{f.detail}</div></td>
+                        <td data-label="Cause class" onClick={(ev) => ev.stopPropagation()}>
                           {f.cause_class ? (
                             f.cause_confirmed || readOnly ? (
                               <div><span className="small strong" title={CAUSE_HINT[f.cause_class]}>{CAUSE_LABEL[f.cause_class]}</span>
@@ -122,10 +122,10 @@ export default function FlagsBoard() {
                             ) : <CauseConfirm value={f.cause_class} onConfirm={(v) => confirmCause(f.id, v)} />
                           ) : <span className="xs muted">Not classified</span>}
                         </td>
-                        <td><div className="small strong">{f.owner_label}</div>{f.suggested_owner && f.suggested_owner !== f.owner_label && <div className="xs muted">AI suggests {f.suggested_owner}</div>}</td>
-                        <td className="num nowrap">{daysAgo(f.raised_at)}d<div className={`xs ${late ? "" : "muted"}`} style={late ? { color: "var(--sev-high)", fontWeight: 650 } : undefined}>{late ? "Overdue " : "Due "}{fmtDate(f.due_at)}</div></td>
-                        <td><SevTag s={f.severity} /></td>
-                        <td onClick={(ev) => ev.stopPropagation()}>
+                        <td data-label="Owner"><div className="small strong">{f.owner_label}</div>{f.suggested_owner && f.suggested_owner !== f.owner_label && <div className="xs muted">AI suggests {f.suggested_owner}</div>}</td>
+                        <td data-label="Age" className="num nowrap">{daysAgo(f.raised_at)}d<div className={`xs ${late ? "" : "muted"}`} style={late ? { color: "var(--sev-high)", fontWeight: 650 } : undefined}>{late ? "Overdue " : "Due "}{fmtDate(f.due_at)}</div></td>
+                        <td data-label="Severity"><SevTag s={f.severity} /></td>
+                        <td data-label="Follow-up" onClick={(ev) => ev.stopPropagation()}>
                           {act ? <button className="btn sm" onClick={() => setDrawer(f.id)}>{{ draft: "Review draft", approved: "In outbox", sent: "Waiting reply", answered: "Answered", rejected: "" }[act.status]}</button>
                             : readOnly ? <span className="xs muted">None</span> : <button className="btn sm primary" onClick={() => setDrawer(f.id)}><Wand2 size={13} />Draft</button>}
                         </td>

@@ -48,7 +48,7 @@ export default function Overview() {
         <Stat k="Open flags" v={flags.length} icon={<Flag size={14} />} d={`${flags.filter((f) => f.severity === "high").length} high severity`} />
       </div>
 
-      <div className="grid" style={{ gridTemplateColumns: "minmax(0,1.3fr) minmax(0,1fr)", marginBottom: 16 }}>
+      <div className="grid split" style={{ gridTemplateColumns: "minmax(0,1.3fr) minmax(0,1fr)", marginBottom: 16 }}>
         <Card title="Average score by project" sub="Current scores; provisional scores included">
           {byProject.length ? <BarChart height={250} categories={byProject.map((x) => x.name)} series={[{ name: "Average score", data: byProject.map((x) => x.v) }]} yMax={100} highlightIndex={lowest} /> : <Empty title="No scores yet" />}
           <div className="xs muted">Highlighted: lowest average.</div>
@@ -58,24 +58,24 @@ export default function Overview() {
         </Card>
       </div>
 
-      <div className="grid" style={{ gridTemplateColumns: "minmax(0,1fr) minmax(0,1.3fr)" }}>
+      <div className="grid split" style={{ gridTemplateColumns: "minmax(0,1fr) minmax(0,1.3fr)" }}>
         <Card title="On-time readiness rate" sub={<span className="row gap6">Outcome reached by the expected date, per month <SimTag /></span>}>
           <AreaChart height={240} categories={ON_TIME_HISTORY.months} series={[{ name: "On time", data: ON_TIME_HISTORY.rate }, { name: "Target", data: ON_TIME_HISTORY.target }]} yMax={100} />
         </Card>
         <Card title="At-risk onboardings" pad={false}>
           {risk.length === 0 ? <Empty title="Nobody is at risk" /> : (
-            <table className="table" style={{ marginTop: 8 }}>
+            <table className="table stack-sm" style={{ marginTop: 8 }}>
               <thead><tr><th>Employee</th><th>Stage</th><th>Score</th><th>Benchmark</th><th>Top flag</th></tr></thead>
               <tbody>
                 {risk.map((c) => {
                   const s = computeScore(db, c.id); const f = openFlags(db, c.id)[0];
                   return (
                     <tr key={c.id} className="clickable" onClick={() => router.push(`/cases/${c.id}`)}>
-                      <td><div className="row"><Avatar name={employee(db, c).name} /><div><div className="strong small nowrap">{employee(db, c).name}</div><div className="xs muted">{project(db, c.project_id)?.name ?? "No project"}</div></div></div></td>
-                      <td><StageTag stage={c.stage} /></td>
-                      <td><span className="num strong">{s.score ?? "–"}</span> <BandTag band={s.band} /></td>
-                      <td className="small" style={{ color: "var(--sev-high)", fontWeight: 600 }}>{benchmarkStatus(db, c).label}</td>
-                      <td>{f ? <FlagTag type={f.type} severity={f.severity} /> : <span className="xs muted">None</span>}</td>
+                      <td className="cell-head"><div className="row"><Avatar name={employee(db, c).name} /><div><div className="strong small nowrap">{employee(db, c).name}</div><div className="xs muted">{project(db, c.project_id)?.name ?? "No project"}</div></div></div></td>
+                      <td data-label="Stage"><StageTag stage={c.stage} /></td>
+                      <td data-label="Score"><span className="num strong">{s.score ?? "–"}</span> <BandTag band={s.band} /></td>
+                      <td data-label="Benchmark" className="small" style={{ color: "var(--sev-high)", fontWeight: 600 }}>{benchmarkStatus(db, c).label}</td>
+                      <td data-label="Top flag">{f ? <FlagTag type={f.type} severity={f.severity} /> : <span className="xs muted">None</span>}</td>
                     </tr>
                   );
                 })}

@@ -45,7 +45,7 @@ export default function Requirements() {
                 {cards.map((c, i) => (
                   <div key={i} className="claim">
                     <div className="row between"><span className="tag violet">{c.type}</span><button className="btn sm ghost" onClick={() => setCards((cs) => cs.filter((_, k) => k !== i))} aria-label="Remove card"><Trash2 size={14} /></button></div>
-                    <div className="grid" style={{ gridTemplateColumns: "1fr 160px", gap: 10, marginTop: 8 }}>
+                    <div className="grid split-sm" style={{ gridTemplateColumns: "1fr 160px", gap: 10, marginTop: 8 }}>
                       <div className="field"><label>Detail</label><input className="input" value={c.detail} onChange={(e) => setCards((cs) => cs.map((x, k) => (k === i ? { ...x, detail: e.target.value } : x)))} /></div>
                       <div className="field"><label>Effective date</label><input className="input" type="date" value={c.effective_date ?? ""} onChange={(e) => setCards((cs) => cs.map((x, k) => (k === i ? { ...x, effective_date: e.target.value || null } : x)))} /></div>
                     </div>
