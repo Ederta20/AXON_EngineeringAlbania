@@ -18,3 +18,13 @@ export function save(mutate: (d: Db) => void, audit?: { actor: string; action: s
 }
 export const json = (data: unknown, status = 200) => Response.json(data, { status });
 export const notFound = (what: string) => json({ error: `${what} not found` }, 404);
+
+// ai_cache table (see supabase/migrations/*_ai_cache.sql). In-memory until Supabase is wired.
+const gc = globalThis as unknown as { __axonAiCache?: Map<string, unknown> };
+export const aiCache = {
+  get: (key: string) => (gc.__axonAiCache ??= new Map()).get(key),
+  upsert: (key: string, output: unknown) => void (gc.__axonAiCache ??= new Map()).set(key, output),
+};
+export function audit(actor: string, action: string, payload: Record<string, unknown>, entity = "ai", entity_id = "-") {
+  getDb().audit_log.unshift({ id: `au-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`, at: new Date().toISOString(), actor, action, entity, entity_id, payload });
+}

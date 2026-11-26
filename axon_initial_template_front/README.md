@@ -16,6 +16,16 @@ npm run dev                  # http://localhost:3000
 
 Node 18.17 or newer. `npm run build` must pass before every push.
 
+## Setup (Gemini backend)
+
+1. `cp .env.example .env.local` and fill in `GEMINI_API_KEY` (you got it by DM) and `CONNECTOR_SECRET`. Never commit `.env.local`.
+2. `npm install`
+3. `npm run dev`
+4. Mock connector: `cp connectors/.env.example connectors/.env`, set the same `CONNECTOR_SECRET`, then `npx tsx connectors/mock/replay.ts`. It posts `seed/starter-pack.json` to `/api/ingest/evidence`.
+5. Try the A3 agent: `curl -X POST localhost:3000/api/agents/assess -H 'content-type: application/json' -d '{"case_id":"ONB-005"}'`
+
+On Vercel, add the same variables under Project → Settings → Environment Variables. Only `lib/ai/callAgent.ts` talks to Gemini; prompts live in `spec/agents/prompts.ts`.
+
 ## Demo script (core flow, about 4 minutes)
 
 | Step | Sign in as | Do this |
