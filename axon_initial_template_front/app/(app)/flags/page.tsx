@@ -156,8 +156,46 @@ export default function FlagsBoard() {
 
       </div>
 
+      {!readOnly && <NeedsReview />}
       <NextActionDrawer flagId={drawer} onClose={() => setDrawer(null)} />
     </>
+  );
+}
+
+/** Brief p.21-22: A1 low-confidence matches and replies A5 could not match go to the PMO. */
+function NeedsReview() {
+  const { db, reviewEvidence } = useAxon();
+  const ev = db.evidence.filter((e) => e.status === "needs_review");
+  const replies = db.audit_log.filter((a) => a.action === "reply_unmatched").slice(0, 5);
+  if (!ev.length && !replies.length) return null;
+  return (
+    <div style={{ marginTop: 16 }}>
+      <Card title="Needs review" sub="AI was not sure. Evidence the Extractor (A1) matched with low confidence, and replies the Reply Listener (A5) could not match to a message." pad={false}>
+        <div className="list">
+          {ev.map((e) => {
+            const c = db.cases.find((x) => x.id === e.case_id);
+            return (
+              <div key={e.id} className="li" style={{ padding: "12px 20px" }}>
+                <div style={{ flex: 1 }}>
+                  <div className="small"><b>{c ? `${employee(db, c).name} · ${c.id}` : e.case_id}</b> · {e.author_label} · {fmtDate(e.occurred_at)} <AiChip label="Low confidence" /></div>
+                  <div className="small ink2">{e.summary}</div><div className="xs muted mono">{e.source_ref}</div>
+                </div>
+                <div className="row gap6"><button className="btn sm primary" onClick={() => reviewEvidence(e.id, true)}>Accept</button><button className="btn sm ghost" onClick={() => reviewEvidence(e.id, false)}>Discard</button></div>
+              </div>
+            );
+          })}
+          {replies.map((a) => (
+            <div key={a.id} className="li" style={{ padding: "12px 20px" }}>
+              <div style={{ flex: 1 }}>
+                <div className="small"><b>Unmatched reply</b> · {fmtDate(String((a.payload?.received_at as string) ?? a.at).slice(0, 10))}</div>
+                <div className="small ink2">{String(a.payload?.summary ?? "")}</div><div className="xs muted mono">{String(a.payload?.thread_ref ?? a.entity_id)}</div>
+              </div>
+              <span className="xs muted">Find the case and paste it there</span>
+            </div>
+          ))}
+        </div>
+      </Card>
+    </div>
   );
 }
 

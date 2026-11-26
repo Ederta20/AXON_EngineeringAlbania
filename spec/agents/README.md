@@ -3,7 +3,7 @@
 Every agent already has a route, a fixed input, a fixed output schema (zod), a mock fallback and the code that saves its proposal to Supabase. To make an agent real you only:
 
 1. **Once:** implement `generate()` in `axon_initial_template_front/lib/ai/callAgent.ts` (call Gemini, return the JSON text) and add `GEMINI_API_KEY` (plus optionally `GEMINI_MODEL`, `GEMINI_MODEL_SMALL`) to `.env.local`.
-2. **Per agent:** write its prompt in `lib/ai/prompts.ts`. Describe the output JSON exactly as the `Out` schema in its route.
+2. **Per agent:** write its prompt in `axon_initial_template_front/spec/agents/prompts.ts` (the spec and the code use this same file; `lib/ai/prompts.ts` re-exports it). Describe the output JSON exactly as the `Out` schema in its route.
 
 Nothing else changes: not the routes, not the screens, not the database.
 
@@ -76,3 +76,18 @@ Check `source` ("ai" or "mock") and `status` in the response, and the new `audit
 
 - Writes to several tables are not one transaction (Supabase's REST API has none). If a write fails halfway, earlier tables in the same save can keep their rows.
 - `PUT /api/db` (browser sync in api mode) accepts any row. It is a demo shortcut; move to per-action routes with role checks before real users.
+
+## Inputs typed in AXON go through A1 (Gemini setup doc)
+- **Paste an update** on the case page (PMO, TL, LM): the text goes to `/api/agents/extract` (`source_kind: pasted`). Only the extracted facts are stored.
+- **Check-in notes** (employee, L5): in `api` mode, the note also goes through A1, so its facts become evidence and A3 reassesses.
+- 1:1 notes go to A6, which then triggers A3.
+
+## Audit
+Every model call writes an `audit_log` row: `actor = agent:<id>`, `action = ai_call`, `payload = { model, inputIds }`. `inputIds` are the ids of the rows the input was built from. Saved proposals add their own row with `agent` and `model`.
+
+## Connectors
+Requests to `/api/ingest/*` and `/api/outbox*` are signed: `x-axon-timestamp` plus `x-axon-signature = HMAC-SHA256(CONNECTOR_SECRET, timestamp + body)`, valid for 5 minutes. Simple mode sends `x-axon-secret` instead. The mock connector signs, replays the starter pack, and delivers approved actions from the outbox every 10 s.
+
+## Completion and review (brief p.22, p.24-25)
+- **A9 trigger:** when a case completes (its outcome is set, or it reaches Closed), A9 runs on its path (`lib/server/completion.ts`, hooked into `PUT /api/db` and `POST /api/cases/:id/outcome`). The app has no Closed step yet, so setting the outcome is the trigger. **To confirm.**
+- **Needs review (PMO, flags board):** evidence A1 saved as `needs_review` (low confidence), with Accept or Discard, plus replies A5 could not match to an action (logged as `reply_unmatched` in `audit_log`).

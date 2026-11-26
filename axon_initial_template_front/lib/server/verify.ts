@@ -1,4 +1,5 @@
-// Signature check for connector requests (ingest + outbox). Same scheme as the backend setup doc.
+// Connector check for ingest and outbox requests (Gemini setup doc): HMAC signature x-axon-signature = sha256(secret, timestamp + body),
+// or, in simple mode, the shared secret in x-axon-secret.
 // The secret lives only in .env.local / Vercel, never in code.
 import { createHmac, timingSafeEqual } from "crypto";
 import { ZodError } from "zod";
@@ -13,6 +14,12 @@ export async function verifyConnector(req: Request): Promise<{ connector: string
   }
   const ts = req.headers.get("x-axon-timestamp") ?? "";
   const sig = req.headers.get("x-axon-signature") ?? "";
+  // Simple mode (hackathon): a connector may send the shared secret itself instead of a signature.
+  const plain = req.headers.get("x-axon-secret");
+  if (!sig && plain != null) {
+    if (plain.length !== secret.length || !timingSafeEqual(Buffer.from(plain), Buffer.from(secret))) throw new Response("bad secret", { status: 401 });
+    return { connector, body: raw ? JSON.parse(raw) : {} };
+  }
   if (Math.abs(Date.now() - Number(ts)) > 5 * 60_000) throw new Response("stale", { status: 401 });
   const expected = createHmac("sha256", secret).update(ts + raw).digest("hex");
   if (sig.length !== expected.length || !timingSafeEqual(Buffer.from(sig), Buffer.from(expected))) throw new Response("bad signature", { status: 401 });

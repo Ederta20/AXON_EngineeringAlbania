@@ -20,7 +20,7 @@ Node 18.17 or newer. `npm run build` must pass before every push.
 
 1. `cp .env.example .env.local` and fill in `GEMINI_API_KEY` (by DM) and `CONNECTOR_SECRET`. Never commit `.env.local`.
 2. `npm install`, then `npm run dev`.
-3. Mock connector: `cp connectors/.env.example connectors/.env`, set the same `CONNECTOR_SECRET`, then `npx tsx connectors/mock/replay.ts`. It posts `seed/starter-pack.json` to `/api/ingest/evidence` with the `x-axon-secret` header.
+3. Mock connector: `cp connectors/.env.example connectors/.env`, set the same `CONNECTOR_SECRET`, then `npx tsx connectors/mock/replay.ts`. It signs each request (HMAC of timestamp + body), posts `seed/starter-pack.json` to `/api/ingest/evidence`, then checks `/api/outbox` every 10 s and confirms delivery of approved actions. `--once` only replays; `--outbox` only delivers.
 4. Try A3: `curl -X POST localhost:3000/api/agents/assess -H 'content-type: application/json' -d '{"case_id":"ONB-005"}'` (`"source":"ai"` means Gemini answered).
 5. With Supabase, run `supabase/migrations/20261126000100_ai_cache.sql` once so answers are cached.
 
@@ -44,6 +44,8 @@ npx tsx connectors/collect/collect.ts ./mail.mbox --case ONB-002       # hint th
 The collector reads files only on your machine. AXON receives the text, but A1 stores only its summaries and a `source_ref`, never the raw content. It needs the app running (`npm run dev`) and uses `connectors/.env`. It writes a `collect-report-*.json` (summaries only; git ignores it). It doesn't sign in to a live mailbox: export mail as `.eml` or `.mbox` first.
 
 ## Before the demo
+
+Pin the model in `.env.local` and Vercel (`GEMINI_MODEL=gemini-3.5-flash-lite`, `GEMINI_FALLBACK_MODEL=gemini-3.1-flash-lite`), then:
 
 ```bash
 npx tsx connectors/warmup.ts   # pre-runs A2, A3 and A8 on the seed so their answers are cached

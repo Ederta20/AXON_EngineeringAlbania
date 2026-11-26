@@ -1,7 +1,8 @@
 // POST /api/ingest/evidence -> connectors send structured evidence only. Unknown fields (body, raw, html) are refused.
-// Auth: header x-axon-secret must equal CONNECTOR_SECRET.
+// Auth: signed (x-axon-timestamp + x-axon-signature) or x-axon-secret, both checked against CONNECTOR_SECRET.
 import { z } from "zod";
 import { getDb, json, save } from "@/lib/server/db";
+import { guard, verifyConnector } from "@/lib/server/verify";
 import { afterEvidence, openFlagIds, READINESS_KINDS } from "@/lib/server/pipeline";
 
 export const maxDuration = 60; // the pipeline runs model calls
@@ -19,12 +20,9 @@ const Evidence = z.object({
 }).strict();
 const Body = z.object({ items: z.array(Evidence).max(50) }).strict();
 
-export async function POST(req: Request) {
-  const secret = process.env.CONNECTOR_SECRET;
-  if (!secret || req.headers.get("x-axon-secret") !== secret) return json({ error: "unauthorized" }, 401);
-  const connector = req.headers.get("x-axon-connector") ?? "unknown";
-
-  const parsed = Body.safeParse(await req.json().catch(() => null));
+export const POST = guard(async (req) => {
+  const { connector, body } = await verifyConnector(req);
+  const parsed = Body.safeParse(body);
   if (!parsed.success) return json({ error: "invalid payload", issues: parsed.error.issues }, 400);
   const items = parsed.data.items;
 
@@ -49,4 +47,4 @@ export async function POST(req: Request) {
   const pipeline = new URL(req.url).searchParams.get("pipeline") === "0" ? null
     : await afterEvidence({ before, after, caseIds: Array.from(touched), assessCaseIds: Array.from(readiness) });
   return json({ ok: true, accepted: items.length - unmatched.length, unmatched, pipeline });
-}
+});
