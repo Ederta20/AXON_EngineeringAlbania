@@ -4,7 +4,7 @@ import { computeScore } from "@/lib/score";
 
 export const dynamic = "force-dynamic";
 export async function GET() {
-  const db = getDb();
+  const db = await getDb();
   return json(db.cases.map((c) => {
     const s = computeScore(db, c.id);
     return { ...c, score: s.score, band: s.band, completeness: s.completeness, capped: s.capped, provisional: s.provisional,

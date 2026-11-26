@@ -9,7 +9,7 @@ const Card = z.object({
 });
 export async function POST(req: Request, { params }: { params: { id: string } }) {
   const b = Card.parse(await req.json());
-  const d = save((db) => { db.client_requirements.unshift({ ...b, id: params.id, status: "submitted", approved_by: null, reason: null, created_at: TODAY }); },
+  const d = await save((db) => { db.client_requirements.unshift({ ...b, id: params.id, status: "submitted", approved_by: null, reason: null, created_at: TODAY }); },
     { actor: b.submitted_by, action: "submit_requirement", entity: "client_requirements", entity_id: params.id });
   return json(d.client_requirements.find((r) => r.id === params.id), 201);
 }

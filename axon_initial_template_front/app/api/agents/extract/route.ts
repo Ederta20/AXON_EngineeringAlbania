@@ -7,7 +7,7 @@ import { getDb, json } from "@/lib/server/db";
 const In = z.object({ source_kind: z.enum(["email", "tracker", "checkin", "one_on_one", "pasted"]), source_ref: z.string(), text: z.string().max(4000), received_at: z.string(), case_hint: z.string().optional() });
 export async function POST(req: Request) {
   const b = In.parse(await req.json());
-  const db = getDb();
+  const db = await getDb();
   const t = b.text.toLowerCase();
   const c = db.cases.find((x) => x.id === b.case_hint) ?? db.cases.find((x) => t.includes(db.users.find((u) => u.id === x.employee_id)!.name.toLowerCase().split(" ")[0]))
     ?? db.cases.find((x) => t.includes((db.projects.find((p) => p.id === x.project_id)?.code ?? "#").toLowerCase()));

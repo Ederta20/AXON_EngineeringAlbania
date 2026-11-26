@@ -9,7 +9,7 @@ export const POST = guard(async (req) => {
   const { connector, body } = await verifyConnector(req);
   const r = Reply.parse(body);
   let matched = false;
-  save((db) => {
+  await save((db) => {
     const a = db.actions.find((x) => x.thread_ref === r.thread_ref || r.thread_ref.startsWith(x.thread_ref));
     if (!a) return; // unmatched replies go to the PMO
     matched = true;

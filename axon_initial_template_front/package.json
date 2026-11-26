@@ -11,6 +11,7 @@
   "dependencies": {
     "@fontsource-variable/jetbrains-mono": "^5.1.0",
     "@fontsource-variable/plus-jakarta-sans": "^5.1.0",
+    "@supabase/supabase-js": "^2.119.2",
     "apexcharts": "^3.54.0",
     "lucide-react": "^0.460.0",
     "next": "^14.2.35",

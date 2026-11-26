@@ -19,7 +19,7 @@ export const POST = guard(async (req) => {
   const { connector, body } = await verifyConnector(req);
   const items = z.array(Evidence).max(50).parse(body.items);
   const unmatched: string[] = [];
-  save((db) => {
+  await save((db) => {
     for (const e of items) {
       const c = db.cases.find((x) => x.id === e.case_ref) ?? db.cases.find((x) => db.projects.find((p) => p.id === x.project_id)?.code === e.case_ref);
       if (!c) { unmatched.push(e.source_ref); continue; } // PMO reviews unmatched items
