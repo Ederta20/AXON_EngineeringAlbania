@@ -1,6 +1,7 @@
 // A4 Next-Action Drafter (Core). POST /api/agents/draft-action {flag_id}
 // Writes: one actions row with status draft (one ask, channel, recipient). Nothing is sent without PMO approval.
 // due_at comes from config (escalate rules), never from the model.
+import { guard } from "@/lib/server/verify";
 import { z } from "zod";
 import { getDb, json, notFound, save } from "@/lib/server/db";
 import { draftAction } from "@/lib/agents";
@@ -18,7 +19,7 @@ const Out = z.object({
   body: z.string().max(800),
 });
 
-export async function POST(req: Request) {
+export const POST = guard(async (req: Request) => {
   const { flag_id } = z.object({ flag_id: z.string() }).parse(await req.json());
   const db = await getDb();
   const f = db.flags.find((x) => x.id === flag_id);
@@ -42,4 +43,4 @@ export async function POST(req: Request) {
       ...r.output, subject: r.output.subject ?? undefined, due_at: base.due_at, evidence_ids: base.evidence_ids });
   }, { actor: r.agent, action: "draft_action", entity: "actions", entity_id: id, payload: { flag_id, status: r.status }, agent: r.agent, model: r.model });
   return json({ ...d.actions.find((a) => a.id === id), source: r.source, agent_status: r.status }, 201); // status = the action's status (draft)
-}
+});

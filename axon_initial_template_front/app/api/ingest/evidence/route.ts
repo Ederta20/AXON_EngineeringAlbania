@@ -21,6 +21,7 @@ const Evidence = z.object({
 const Body = z.object({ items: z.array(Evidence).max(50) }).strict();
 
 export const POST = guard(async (req) => {
+  const startedAt = Date.now();
   const { connector, body } = await verifyConnector(req);
   const parsed = Body.safeParse(body);
   if (!parsed.success) return json({ error: "invalid payload", issues: parsed.error.issues }, 400);
@@ -45,6 +46,6 @@ export const POST = guard(async (req) => {
   }, { actor: `connector:${connector}`, action: "ingest", entity: "evidence", entity_id: String(items.length), payload: { count: items.length - unmatched.length } });
   // Brief pipeline: A2 explains new flags, A3 reassesses cases with new readiness evidence. ?pipeline=0 skips it (bulk replays).
   const pipeline = new URL(req.url).searchParams.get("pipeline") === "0" ? null
-    : await afterEvidence({ before, after, caseIds: Array.from(touched), assessCaseIds: Array.from(readiness) });
+    : await afterEvidence({ before, after, caseIds: Array.from(touched), assessCaseIds: Array.from(readiness), startedAt });
   return json({ ok: true, accepted: items.length - unmatched.length, unmatched, pipeline });
 });

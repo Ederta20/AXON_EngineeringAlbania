@@ -59,7 +59,7 @@ Rules:
 - recipient_role: a readable job title such as "Tech Lead", "Line Manager", "HR Partner" or "Application owner" (use the person's title from "people"), never a short code like "tl" or "lm".
 - Be specific: name the exact system, scope or missing item from the input (e.g. the access item that is still "requested"), not "the systems" or "the issue".
 - subject: a short subject line for outlook; null for teams.
-- body: at most 3 short sentences, plain and polite. Start with "Hi <first name>," (or "Hello," if only a role is known). Say who and what it is about using facts from the input only, ask exactly ONE clear question or action, and give the deadline as due_at written like "16 Oct". No other dates or numbers than the ones in the input. No sign-off, no emojis, no raw message text.
+- body: at most 3 short sentences, plain and polite. Start with "Hi <first name>," (or "Hello," if only a role is known). Say who and what it is about using facts from the input only, ask exactly ONE clear question or action, and give the deadline as due_at written like "16 Oct". No other dates or numbers than the ones in the input. No sign-off, no emojis, no raw message text. Never put AXON ids (evidence ids like "ev-…", flag ids like "fl-…", or user ids) in the message: the recipient cannot see AXON; name the system, person or date instead.
 Answer with exactly this JSON:
 {"channel":"teams|outlook","recipient":"<name or role>","recipient_role":"<their role, e.g. Tech Lead>","subject":"<text>" or null,"body":"<the message>"}`,
   A5: `${COMMON}\nA5 Reply Listener has no prompt of its own: it matches the reply to its action by thread_ref (rules) and passes the text to A1 (see lib/server/reply.ts).`,

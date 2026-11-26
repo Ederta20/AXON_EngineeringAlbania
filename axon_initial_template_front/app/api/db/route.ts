@@ -13,10 +13,11 @@ export async function GET() {
 }
 
 export async function PUT(req: Request) {
+  const startedAt = Date.now();
   const changes = (await req.json()) as DbChanges;
   if (!changes || typeof changes.tables !== "object") return json({ error: "invalid changes" }, 400);
   const before = completedCaseIds(await getDb());
   const after = await applyChanges(changes);
-  const a9 = await afterCompletion(before, after); // brief pipeline step 6: a completed case updates its path
+  const a9 = await afterCompletion(before, after, startedAt); // brief pipeline step 6: a completed case updates its path
   return json(publicDb(a9.some((x) => x.suggestions) ? await getDb() : after));
 }

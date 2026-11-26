@@ -1,6 +1,7 @@
 // A3 Readiness Assessor (Core). POST /api/agents/assess {case_id}
 // Reads: scopes, evidence, past validations, check-ins. Writes: validations with proposed_level only (decided_level stays empty).
 // Never "validated": only the TL sets decided_level in C5.
+import { guard } from "@/lib/server/verify";
 import { z } from "zod";
 import { getDb, json, notFound, save } from "@/lib/server/db";
 import { callAgent } from "@/lib/ai/callAgent";
@@ -19,7 +20,7 @@ const Out = z.object({
   conflicts: z.array(z.string()),
 });
 
-export async function POST(req: Request) {
+export const POST = guard(async (req: Request) => {
   const { case_id } = z.object({ case_id: z.string() }).parse(await req.json());
   const db = await getDb();
   const c = db.cases.find((x) => x.id === case_id);
@@ -50,4 +51,4 @@ export async function POST(req: Request) {
     }
   }, { actor: r.agent, action: "propose_levels", entity: "cases", entity_id: case_id, payload: { scopes: proposals.length, status: r.status }, agent: r.agent, model: r.model });
   return json({ source: r.source, status: r.status, proposed: true, ...r.output, scopes: proposals });
-}
+});

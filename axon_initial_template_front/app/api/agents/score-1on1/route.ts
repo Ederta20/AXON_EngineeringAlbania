@@ -1,5 +1,6 @@
 // A6 1:1 Scorer (Core-lite). POST /api/agents/score-1on1 {case_id, rater_id, rating_human, note}
 // Writes: a one_on_ones row with rating_ai, and a rating_gap flag when |AI - human| > config.rating_gap. Counts 5% of the score.
+import { guard } from "@/lib/server/verify";
 import { z } from "zod";
 import { getDb, json, notFound, save } from "@/lib/server/db";
 import { scoreOneOnOne } from "@/lib/agents";
@@ -8,6 +9,7 @@ import { PROMPTS } from "@/lib/ai/prompts";
 import { TODAY } from "@/lib/seed";
 import { addDays } from "@/lib/dates";
 import { POST as assess } from "@/app/api/agents/assess/route";
+import { withinRoute } from "@/lib/server/pipeline";
 
 export const maxDuration = 60;
 
@@ -24,7 +26,8 @@ const In = z.object({ case_id: z.string(), rater_id: z.string(), rating_human: z
 const Out = z.object({ rating_ai: z.number().int().min(1).max(10), rationale: z.string().max(300),
   rubric: z.object({ understanding: z.number().int().min(1).max(10), communication: z.number().int().min(1).max(10), confidence: z.number().int().min(1).max(10), issues_raised: z.number().int().min(1).max(10) }).optional() });
 
-export async function POST(req: Request) {
+export const POST = guard(async (req: Request) => {
+  const startedAt = Date.now();
   const b = In.parse(await req.json());
   const db = await getDb();
   if (!db.cases.some((c) => c.id === b.case_id)) return notFound("case");
@@ -45,8 +48,8 @@ export async function POST(req: Request) {
       detail: `1:1 rated ${b.rating_human}/10 by ${rater?.name ?? "the rater"}; AI scored the note ${ai}/10. Gap over ${d.config.rating_gap} points.`, root_cause: null, origin: "manual" });
   }, { actor: r.agent, action: "score_1on1", entity: "one_on_ones", entity_id: id, payload: { rating_human: b.rating_human, rating_ai: ai, gap }, agent: r.agent, model: r.model });
   // A 1:1 is readiness evidence: A3 reassesses the case (brief pipeline).
-  const a3 = await assess(new Request("http://axon.internal/a6", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ case_id: b.case_id }) }))
-    .then((x) => (x.ok ? x.json() : null)).catch(() => null);
+  const a3 = await withinRoute(assess(new Request("http://axon.internal/a6", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ case_id: b.case_id }) }))
+    .then((x) => (x.ok ? x.json() : null)).catch(() => null), startedAt, null);
   return json({ source: r.source, status: r.status, proposed: true, id, rating_ai: ai, rating_ai_raw: r.output.rating_ai, calibration: cal, rubric: (r.output as z.infer<typeof Out>).rubric ?? null,
     rationale: r.output.rationale, gap, reassessed: a3 ? { source: a3.source, scopes: a3.scopes?.length ?? 0 } : null });
-}
+});

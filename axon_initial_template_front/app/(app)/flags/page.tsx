@@ -167,10 +167,11 @@ function NeedsReview() {
   const { db, reviewEvidence } = useAxon();
   const ev = db.evidence.filter((e) => e.status === "needs_review");
   const replies = db.audit_log.filter((a) => a.action === "reply_unmatched").slice(0, 5);
-  if (!ev.length && !replies.length) return null;
+  const unmatched = db.audit_log.filter((a) => a.action === "evidence_unmatched").slice(0, 5);
+  if (!ev.length && !replies.length && !unmatched.length) return null;
   return (
     <div style={{ marginTop: 16 }}>
-      <Card title="Needs review" sub="AI was not sure. Evidence the Extractor (A1) matched with low confidence, and replies the Reply Listener (A5) could not match to a message." pad={false}>
+      <Card title="Needs review" sub="AI was not sure. Evidence the Extractor (A1) matched with low confidence or to no case, and replies the Reply Listener (A5) could not match to a message." pad={false}>
         <div className="list">
           {ev.map((e) => {
             const c = db.cases.find((x) => x.id === e.case_id);
@@ -184,6 +185,16 @@ function NeedsReview() {
               </div>
             );
           })}
+          {unmatched.map((a) => (
+            <div key={a.id} className="li" style={{ padding: "12px 20px" }}>
+              <div style={{ flex: 1 }}>
+                <div className="small"><b>No case found</b> · {fmtDate(String((a.payload?.received_at as string) ?? a.at).slice(0, 10))} <AiChip label="A1" /></div>
+                {((a.payload?.summaries as string[]) ?? []).map((x, i) => <div key={i} className="small ink2">{x}</div>)}
+                <div className="xs muted mono">{String(a.payload?.source_ref ?? a.entity_id)}</div>
+              </div>
+              <span className="xs muted">Open the right case and paste it there</span>
+            </div>
+          ))}
           {replies.map((a) => (
             <div key={a.id} className="li" style={{ padding: "12px 20px" }}>
               <div style={{ flex: 1 }}>

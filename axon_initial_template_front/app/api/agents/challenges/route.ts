@@ -1,5 +1,6 @@
 // A7 Challenge Generator (Extra). POST /api/agents/challenges {skill_id}
 // Reads skill metadata only (no doc content). Writes 2-3 challenges with approved_by empty; the TL approves them in X2.
+import { guard } from "@/lib/server/verify";
 import { z } from "zod";
 import { getDb, json, notFound, save } from "@/lib/server/db";
 import { callAgent } from "@/lib/ai/callAgent";
@@ -9,7 +10,7 @@ export const maxDuration = 60;
 
 const Out = z.object({ challenges: z.array(z.object({ prompt: z.string().min(10).max(400) })).min(2).max(3) });
 
-export async function POST(req: Request) {
+export const POST = guard(async (req: Request) => {
   const { skill_id } = z.object({ skill_id: z.string() }).parse(await req.json());
   const db = await getDb();
   const skill = db.skills.find((s) => s.id === skill_id);
@@ -29,4 +30,4 @@ export async function POST(req: Request) {
   if (rows.length) await save((d) => { d.challenges.push(...rows); },
     { actor: r.agent, action: "generate_challenges", entity: "skills", entity_id: skill_id, payload: { count: rows.length, status: r.status }, agent: r.agent, model: r.model });
   return json({ source: r.source, status: r.status, proposed: true, skill_id, challenges: rows.length ? rows : existing.map((c) => ({ ...c, approved_by: null })) });
-}
+});
