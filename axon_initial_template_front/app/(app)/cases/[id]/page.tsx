@@ -183,6 +183,7 @@ export default function CaseDetail() {
 
           {/* Evidence timeline */}
           {show.evidence && <EvidenceTimeline caseId={c.id} focus={focus} clearFocus={() => setFocus(null)} hideOneOnOne={!show.oneOnOne} />}
+          {(role === "pmo" || role === "tl" || role === "lm") && <PasteUpdate caseId={c.id} />}
         </div>
 
         <div className="stack">
@@ -253,6 +254,41 @@ export default function CaseDetail() {
       {show.rate && <OneOnOneModal caseId={c.id} open={rate} onClose={() => setRate(false)} onDone={setToast} />}
       <Toast msg={toast} onDone={() => setToast(null)} />
     </>
+  );
+}
+
+/** A1 for text typed in AXON (Gemini setup doc): paste an email or note; only the extracted facts are stored. */
+function PasteUpdate({ caseId }: { caseId: string }) {
+  const { pasteUpdate, aiLive } = useAxon();
+  const [text, setText] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [res, setRes] = useState<Awaited<ReturnType<typeof pasteUpdate>> | null>(null);
+  const [err, setErr] = useState<string | null>(null);
+  const run = async () => {
+    setBusy(true); setErr(null); setRes(null);
+    try { const r = await pasteUpdate(caseId, text); setRes(r); if (r.source === "ai") setText(""); }
+    catch (e) { console.error(e); setErr("The extraction failed. Try again."); } finally { setBusy(false); }
+  };
+  return (
+    <Card title="Paste an update" sub="Paste an email, chat message or note. The Evidence Extractor (A1) turns it into evidence; the text itself is not stored.">
+      <textarea className="input" rows={4} style={{ width: "100%", resize: "vertical" }} value={text} onChange={(e) => setText(e.target.value)} maxLength={4000}
+        placeholder="e.g. Hi Sara, Orion Portal was approved yesterday and Leo can log in. Helix is still not provisioned." aria-label="Update text" />
+      <div className="row gap6" style={{ marginTop: 8, flexWrap: "wrap" }}>
+        <button className="btn primary sm" onClick={run} disabled={busy || text.trim().length < 10}>{busy ? "AI is reading…" : "Extract evidence"}</button>
+        {err && <span className="small" style={{ color: "var(--sev-high)" }}>{err}</span>}
+        {res && res.source === "mock" && <span className="small ink2">{aiLive ? "AI unavailable right now." : "Demo mode: set NEXT_PUBLIC_DATA_SOURCE=api for live AI."}</span>}
+      </div>
+      {res && res.source === "ai" && (
+        <div className="small" style={{ marginTop: 10 }}>
+          <div className="row gap6"><AiChip label="AI" /><b>{res.summaries.length} fact{res.summaries.length === 1 ? "" : "s"} saved</b>
+            {res.status !== "ok" && <span className="tag outline xs">Needs PMO review</span>}
+            {res.case_id && res.case_id !== caseId && <span className="tag outline xs">Matched to {res.case_id}</span>}</div>
+          <ul style={{ margin: "6px 0 0 18px", padding: 0 }}>{res.summaries.map((x, i) => <li key={i} className="ink2">{x}</li>)}</ul>
+          {(res.access > 0 || res.flags_explained > 0 || res.reassessed) && <div className="xs muted" style={{ marginTop: 4 }}>
+            {[res.access ? `${res.access} access change proposed` : "", res.flags_explained ? `${res.flags_explained} new flag explained by A2` : "", res.reassessed ? "readiness reassessed by A3" : ""].filter(Boolean).join(" · ")}</div>}
+        </div>
+      )}
+    </Card>
   );
 }
 

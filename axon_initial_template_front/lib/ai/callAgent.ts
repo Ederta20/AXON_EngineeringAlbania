@@ -11,7 +11,7 @@
 import { createHash } from "crypto";
 import { GoogleGenAI } from "@google/genai";
 import type { ZodType } from "zod";
-import { aiCache } from "@/lib/server/db";
+import { aiCache, logAudit } from "@/lib/server/db";
 
 export type AgentId = "A1" | "A2" | "A3" | "A4" | "A5" | "A6" | "A7" | "A8" | "A9" | "A10";
 
@@ -27,7 +27,11 @@ export interface AgentCall<T> {
   input: unknown;          // structured input; serialized as JSON for the model. Numbers and dates come from SQL, never from the model.
   schema: ZodType<T>;      // the output contract; also describe it in the prompt
   fallback: () => T;       // the mock answer used when the model is off or fails
+  inputIds?: string[];     // ids of the rows the input was built from (audit_log); collected from the input when omitted
 }
+
+/** Every "id" in the input, for the audit row (Gemini setup doc: payload { model, inputIds }). */
+const idsIn = (input: unknown) => Array.from(new Set(Array.from(JSON.stringify(input).matchAll(/"id":"([^"]+)"/g), (m) => m[1]))).slice(0, 100);
 
 export interface AgentResult<T> {
   output: T;
@@ -60,7 +64,7 @@ async function generate(system: string, user: string, model: string): Promise<{ 
     if (!r.text) throw new Error("empty model response");
     return { text: r.text, model: m };
   };
-  const fallback = process.env.GEMINI_FALLBACK_MODEL || "gemini-flash-lite-latest";
+  const fallback = process.env.GEMINI_FALLBACK_MODEL || "gemini-3.1-flash-lite";
   try {
     return await once(model, 20_000);
   } catch (e) {
@@ -79,7 +83,7 @@ async function generate(system: string, user: string, model: string): Promise<{ 
 
 /** Small model for A1, A5, A6; larger for A2, A3, A9 (brief, Part 5). Override per agent with env vars if needed. */
 function modelFor(agent: AgentId) {
-  const small = process.env.GEMINI_MODEL_SMALL || process.env.GEMINI_MODEL || "gemini-flash-latest";
+  const small = process.env.GEMINI_MODEL_SMALL || process.env.GEMINI_MODEL || "gemini-3.5-flash-lite";
   const large = process.env.GEMINI_MODEL || small;
   return ["A1", "A5", "A6"].includes(agent) ? small : large;
 }
@@ -107,6 +111,7 @@ export async function callAgent<T>(call: AgentCall<T>): Promise<AgentResult<T>> 
       const parsed = call.schema.safeParse(JSON.parse(res.text));
       if (parsed.success) {
         if (useCache) await aiCache.upsert(key, { output: parsed.data, model });
+        await logAudit({ actor: `agent:${call.agent}`, action: "ai_call", entity: "agents", entity_id: call.agent, agent, model, payload: { model, inputIds: call.inputIds ?? idsIn(call.input) } });
         return { output: parsed.data, source: "ai", status: "ok", model, agent };
       }
       user = `${JSON.stringify(call.input)}\n\nYour previous answer did not match the required JSON schema: ${parsed.error.message}. Answer again with valid JSON only.`;

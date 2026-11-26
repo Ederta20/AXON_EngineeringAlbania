@@ -210,3 +210,12 @@ export const aiCache = {
     if (error) console.warn(`[ai_cache] write: ${error.message}`);
   },
 };
+
+/** One audit_log row written directly (no full reload). Used by callAgent for each model call (Gemini setup doc). */
+export async function logAudit(row: { actor: string; action: string; entity: string; entity_id: string; payload?: Record<string, unknown>; agent?: string | null; model?: string | null }) {
+  const full = { id: `au-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`, at: new Date().toISOString(), ...row };
+  if (!usingSupabase) return void memDb().audit_log.unshift(full);
+  const { error } = await sb().from("audit_log").insert({ ...full, agent: row.agent ?? null, model: row.model ?? null });
+  if (error) console.warn(`[audit_log] write: ${error.message}`);
+  g.__axonCache = undefined;
+}

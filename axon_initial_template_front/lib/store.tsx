@@ -19,6 +19,7 @@ const uid = (p: string) => `${p}-${Date.now().toString(36)}${(seq++).toString(36
 
 type ReqCard = ReturnType<typeof a10>["cards"][number];
 /** What an agent button needs to tell the person: did the real model answer, and does a human need to check it. */
+export type PasteResult = { source: "ai" | "mock"; status: string; case_id: string | null; summaries: string[]; access: number; flags_explained: number; reassessed: boolean };
 export type AgentRun = { source: "ai" | "mock"; status: "ok" | "needs_review"; count?: number; conflicts?: string[] };
 
 interface Store {
@@ -42,6 +43,7 @@ interface Store {
   generateChallenges(skillId: string): Promise<AgentRun>;      // POST /api/agents/challenges (A7)
   improvePath(pathId: string): Promise<AgentRun>;              // POST /api/agents/improve (A9)
   writeReport(audience: "management" | "digest"): Promise<{ source: "ai" | "mock"; subject: string; text: string }>; // POST /api/agents/report (A8)
+  pasteUpdate(caseId: string, text: string): Promise<PasteResult>; // POST /api/agents/extract (A1, text typed in AXON)
   resolveFlag(flagId: string, reason: string): void;           // PATCH /api/flags/:id {status: resolved}
   decideValidation(id: string, level: ScopeLevel, reason: string | null): void; // POST /api/validations/:id/decide
   setOutcome(caseId: string, outcome: Outcome, reason: string): void;          // POST /api/cases/:id/outcome
@@ -157,8 +159,15 @@ export function AxonProvider({ children }: { children: React.ReactNode }) {
     approveAction(id) {
       commit((d) => { const a = d.actions.find((x) => x.id === id)!; a.status = "approved"; a.approved_by = user?.id ?? null; },
         { action: "approve_action", entity: "actions", entity_id: id });
-      setTimeout(() => commit((d) => { const a = d.actions.find((x) => x.id === id); if (a && a.status === "approved") { a.status = "sent"; a.sent_at = TODAY; } },
-        { actor: "connector:mock-mail", action: "delivered", entity: "actions", entity_id: id }), 1400);
+      // api mode: the mock connector picks it up from GET /api/outbox (every 10 s) and confirms delivery.
+      // Fallback if no connector is running: mark it sent after 15 s, as the in-browser demo does after 1.4 s.
+      setTimeout(() => {
+        const a = dbRef.current.actions.find((x) => x.id === id);
+        if (!a || a.status !== "approved") return;
+        commit((d) => { const x = d.actions.find((y) => y.id === id); if (x && x.status === "approved") { x.status = "sent"; x.sent_at = TODAY; } },
+          { actor: "connector:mock-mail (fallback)", action: "delivered", entity: "actions", entity_id: id });
+      }, API ? 15000 : 1400);
+      if (API) setTimeout(() => { loadFromServer().catch(() => {}); }, 11000); // pick up the connector's delivery
     },
     rejectAction(id, reason) {
       commit((d) => { const a = d.actions.find((x) => x.id === id)!; a.status = "rejected"; a.reject_reason = reason; }, { action: "reject_action", entity: "actions", entity_id: id, payload: { reason } });
@@ -255,6 +264,19 @@ export function AxonProvider({ children }: { children: React.ReactNode }) {
       return { source: "mock", subject: "AXON report (demo mode)", text: "Live reports need NEXT_PUBLIC_DATA_SOURCE=api. The numbers on this page are the same ones the report would use." };
     },
 
+    async pasteUpdate(caseId, text) {
+      if (API) { // A1 extracts facts from the pasted text, saves them as evidence and runs the pipeline. The text itself is not stored.
+        await queue.current;
+        const r = await postAgent<{ source: "ai" | "mock"; status: string; case_id: string | null; facts: { summary: string }[]; access_updates: unknown[];
+          pipeline: { flags_explained: unknown[]; cases_assessed: unknown[] } | null }>("/api/agents/extract", { source_kind: "pasted", source_ref: `axon://pasted/${caseId}/${Date.now().toString(36)}`, text, received_at: TODAY, case_hint: caseId });
+        await loadFromServer();
+        return { source: r.source, status: r.status, case_id: r.case_id, summaries: r.facts.map((f) => f.summary), access: r.access_updates.length,
+          flags_explained: r.pipeline?.flags_explained.length ?? 0, reassessed: (r.pipeline?.cases_assessed.length ?? 0) > 0 };
+      }
+      await wait(700);
+      return { source: "mock", status: "ok", case_id: caseId, summaries: [], access: 0, flags_explained: 0, reassessed: false };
+    },
+
     async submitOneOnOne(caseId, rating, note) {
       if (API) { // A6 scores the note on the server and saves the 1:1 (and a rating_gap flag if needed)
         const r = await postAgent<{ rating_ai: number; gap: boolean }>("/api/agents/score-1on1", { case_id: caseId, rater_id: user?.id ?? "u-pmo", rating_human: rating, note });
@@ -281,6 +303,12 @@ export function AxonProvider({ children }: { children: React.ReactNode }) {
           source_ref: `axon://checkin/${caseId}/${TODAY}`, occurred_at: TODAY, summary: `Weekly check-in. Self-assessment ${entries.map(([sid, v]) => `${d.scopes.find((s) => s.id === sid)?.name}: ${v}/10`).join("; ")}.${note ? " Note: " + note : ""}`,
           claimed_status: null, support_level: null, reworked: false, value_0_100: null, disputed: false, extracted_by: "manual", status: "ok" });
       }, { action: "checkin", entity: "checkins", entity_id: caseId });
+      // api mode: the free-text note also goes through A1, so facts in it ("did the outage drill alone") become evidence
+      // and the pipeline runs (A3 reassesses on check-in evidence).
+      if (API && note.trim().length > 10) {
+        queue.current.then(() => postAgent("/api/agents/extract", { source_kind: "checkin", source_ref: `axon://checkin/${caseId}/${TODAY}#note`, text: note, received_at: TODAY, case_hint: caseId }))
+          .then(() => loadFromServer()).catch((e) => console.error("AXON: A1 on the check-in note failed", e));
+      }
     },
     confirmAccess(itemId) {
       commit((d) => { const x = d.access_items.find((i) => i.id === itemId)!; x.state = "usable"; x.updated_at = TODAY; x.note = "Confirmed working by the employee."; x.next_followup_at = null;
