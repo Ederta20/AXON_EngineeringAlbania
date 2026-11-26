@@ -16,6 +16,16 @@ npm run dev                  # http://localhost:3000
 
 Node 18.17 or newer. `npm run build` must pass before every push.
 
+## Setup (Gemini agents)
+
+1. `cp .env.example .env.local` and fill in `GEMINI_API_KEY` (by DM) and `CONNECTOR_SECRET`. Never commit `.env.local`.
+2. `npm install`, then `npm run dev`.
+3. Mock connector: `cp connectors/.env.example connectors/.env`, set the same `CONNECTOR_SECRET`, then `npx tsx connectors/mock/replay.ts`. It posts `seed/starter-pack.json` to `/api/ingest/evidence` with the `x-axon-secret` header.
+4. Try A3: `curl -X POST localhost:3000/api/agents/assess -H 'content-type: application/json' -d '{"case_id":"ONB-005"}'` (`"source":"ai"` means Gemini answered).
+5. With Supabase, run `supabase/migrations/20261126000100_ai_cache.sql` once so answers are cached.
+
+On Vercel, add the same variables under Project → Settings → Environment Variables. Agents whose prompt in `lib/ai/prompts.ts` still says `TODO:` return their mock answer.
+
 ## Demo script (core flow, about 4 minutes)
 
 | Step | Sign in as | Do this |
@@ -71,7 +81,7 @@ lib/server/            in-memory db for API routes, connector signature check
 ## Hooking up the backend
 
 1. **Done:** `lib/server/db.ts` reads and writes Supabase when `NEXT_PUBLIC_SUPABASE_URL` and `SUPABASE_SECRET_KEY` are set in `.env.local` (schema and seed in `/supabase`). Without them it falls back to the in-memory seed. `save()` reruns the rules engine and writes back only the changed rows; `lib/server/tables.ts` maps each table.
-2. **Ready for the agents:** A1, A2, A3, A4, A6 and A10 already go through `callAgent()` (`lib/ai/callAgent.ts`) with a zod output schema and a mock fallback, and save their proposals. To make them real, implement `generate()` there and write the prompts in `lib/ai/prompts.ts`. See `/spec/agents/README.md`. Only `lib/ai/callAgent.ts` may call the model.
+2. **Ready for the agents:** A1, A2, A3, A4, A6 and A10 already go through `callAgent()` (`lib/ai/callAgent.ts`) with a zod output schema and a mock fallback, and save their proposals. `generate()` calls Gemini; A3 has its prompt. To make another agent real, write its prompt in `lib/ai/prompts.ts`. See `/spec/agents/README.md`. Only `lib/ai/callAgent.ts` may call the model.
 3. **Done:** with `NEXT_PUBLIC_DATA_SOURCE=api`, `lib/store.tsx` loads everything from `GET /api/db` and, after each action, sends only the changed rows to `PUT /api/db` (`lib/dbdiff.ts`). The server writes them to Supabase, reruns the rules and returns the new state. **Reset demo** reloads from the database instead of the seed. Demo shortcut: `PUT /api/db` accepts any row; move to the per-action routes with role checks before real users.
 4. Connectors (`/connectors`, separate process) talk only to `/api/ingest/*` and `/api/outbox`, signed with `CONNECTOR_SECRET`. AXON never reads mail or chat.
 

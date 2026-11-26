@@ -26,7 +26,7 @@ export async function POST(req: Request) {
   const input = {
     case: c, scopes,
     evidence: db.evidence.filter((e) => e.case_id === case_id && e.status === "ok"),
-    past_validations: db.validations.filter((v) => v.case_id === case_id),
+    past_validations: db.validations.filter((v) => v.case_id === case_id && v.decided_level), // TL decisions only, not open AI proposals
     checkins: db.checkins.filter((x) => x.case_id === case_id),
   };
   const r = await callAgent({
