@@ -60,7 +60,7 @@ export default function MyPath() {
                   const done = db.done_steps.includes(s.key);
                   const Ic = STEP_ICON[s.kind];
                   return (
-                    <div key={s.key} className="li" style={{ alignItems: "center", opacity: done ? 0.55 : 1 }}>
+                    <div key={s.key} className="li step-li" style={{ alignItems: "center", opacity: done ? 0.55 : 1 }}>
                       <button className="btn icon ghost" onClick={() => toggleStep(s.key)} aria-label={done ? "Mark as not done" : "Mark as done"} disabled={s.kind === "wait"}>
                         {done ? <CheckCircle2 size={20} color="var(--ok)" /> : <Circle size={20} color="var(--ink-3)" />}
                       </button>
@@ -69,7 +69,7 @@ export default function MyPath() {
                         <div className="strong" style={{ textDecoration: done ? "line-through" : undefined }}>{s.title}</div>
                         <div className="small muted">{s.detail}{s.due ? ` · follow-up ${fmtDate(s.due)}` : ""}</div>
                       </div>
-                      <span className="tag outline">{s.owner === "You" ? "You" : `Waiting on ${s.owner}`}</span>
+                      <span className="tag outline step-owner">{s.owner === "You" ? "You" : `Waiting on ${s.owner}`}</span>
                     </div>
                   );
                 })}

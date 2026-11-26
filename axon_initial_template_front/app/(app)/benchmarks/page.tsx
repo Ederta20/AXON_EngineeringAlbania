@@ -31,11 +31,11 @@ export default function Benchmarks() {
   return (
     <>
       <PageHead title="Paths and benchmarks" question="Where do onboardings on this path take longer than usual?" right={
-        <select className="select" style={{ width: 260 }} value={pathId} onChange={(e) => setPathId(e.target.value)} aria-label="Path">
+        <select className="select" style={{ width: "min(260px, 100%)" }} value={pathId} onChange={(e) => setPathId(e.target.value)} aria-label="Path">
           {db.paths.map((p) => <option key={p.id} value={p.id}>{project(db, p.project_id)?.name} · {p.role_name}</option>)}
         </select>} />
       <Needed>{proposed.length ? `${proposed.length} template change${proposed.length > 1 ? "s" : ""} proposed from confirmed root causes. Approve the ones you want new onboardings to inherit.` : "No template changes waiting."}</Needed>
-      <div className="grid" style={{ gridTemplateColumns: "minmax(0,1.4fr) minmax(0,1fr)" }}>
+      <div className="grid split" style={{ gridTemplateColumns: "minmax(0,1.4fr) minmax(0,1fr)" }}>
         <Card title={`Days per stage · ${project(db, path.project_id)?.name}`} sub={<span className="row gap6">Benchmark = median of completed onboardings ({bm[0]?.n_completed ?? 0} on this path){bm[0]?.provisional && <span className="tag outline xs">Provisional</span>}<SimTag /></span>}>
           <BarChart height={280} categories={ORDER.map((s) => STAGE_LABEL[s])} colors={["#FF5B00", "#301B69", "#8261D1", "#354ED8"]}
             series={[{ name: "Benchmark (median)", data: bm.map((b) => b?.median_days ?? 0) }, ...cases.map((c) => ({ name: employee(db, c).name, data: ORDER.map((s) => daysIn(c.id, s)) }))]} />

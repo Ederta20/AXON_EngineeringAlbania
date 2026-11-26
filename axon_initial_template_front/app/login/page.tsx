@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 import { useAxon } from "@/lib/store";
 import { homeFor } from "@/components/Shell";
-import { Avatar } from "@/components/ui";
+import { Avatar, Crystal } from "@/components/ui";
 import { ROLE_LABEL, ROLE_QUESTION } from "@/lib/labels";
 import type { Role } from "@/lib/types";
 
@@ -25,11 +25,12 @@ export default function Login() {
   const go = (id: string) => { const u = db.users.find((x) => x.id === id)!; login(id); router.push(homeFor(u.role)); };
 
   return (
-    <div className="login-wrap">
+    <div className="login-shell"><div className="frame"><div className="app login-wrap">
       <section className="login-hero">
+        <Crystal />
         <div className="row gap16">
           <div className="brand-mark" style={{ width: 38, height: 38 }}><svg width="18" height="18" viewBox="0 0 16 16" aria-hidden><path d="M2 14 8 2l6 12M4.6 9h6.8" stroke="#fff" strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round" /></svg></div>
-          <div><div className="brand-name" style={{ fontSize: 18 }}>AXON</div><div className="brand-sub" style={{ color: "#CFC4F2" }}>Engineering Albania · Student Hackathon prototype</div></div>
+          <div><div className="brand-name" style={{ fontSize: 18 }}>AXON</div><div className="brand-sub">Engineering Albania · Student Hackathon prototype</div></div>
         </div>
         <div>
           <h1>When is a new hire ready? Decide it from evidence.</h1>
@@ -38,7 +39,7 @@ export default function Login() {
             {["Detect", "Triage", "Trace", "Score", "Act", "Validate", "Update"].map((s, i) => <span key={s}>{i + 1}. {s}</span>)}
           </div>
         </div>
-        <div className="small" style={{ color: "#CFC4F2" }}>Fictional data from the Student Starter Pack. Teams and Outlook are simulated. App clock fixed at 14 Oct 2026.</div>
+        <div className="small muted">Fictional data from the Student Starter Pack. Teams and Outlook are simulated. App clock fixed at 14 Oct 2026.</div>
       </section>
       <section className="login-pane">
         <h2 style={{ margin: "0 0 4px", fontSize: 22, color: "var(--midnight)", letterSpacing: "-0.02em" }}>Sign in as a demo user</h2>
@@ -62,6 +63,6 @@ export default function Login() {
           })}
         </div>
       </section>
-    </div>
+    </div></div></div>
   );
 }

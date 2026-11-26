@@ -79,7 +79,7 @@ export default function CaseDetail() {
 
       {/* Header */}
       <section className="card" style={{ marginBottom: 16 }}>
-        <div className="card-pad" style={{ display: "grid", gridTemplateColumns: show.score ? "minmax(0,1fr) auto" : "1fr", gap: 24, alignItems: "center" }}>
+        <div className="card-pad split" style={{ display: "grid", gridTemplateColumns: show.score ? "minmax(0,1fr) auto" : "1fr", gap: 24, alignItems: "center" }}>
           <div className="stack" style={{ gap: 12 }}>
             <div className="row gap16 top">
               <Avatar name={emp.name} lg dark />
@@ -106,9 +106,9 @@ export default function CaseDetail() {
             </dl>
           </div>
           {show.score && (
-            <div className="row gap16" style={{ alignItems: "center" }}>
+            <div className="row gap16 wrap score-side" style={{ alignItems: "center" }}>
               <ScoreRing score={score.score} band={score.band} capped={score.capped} provisional={score.provisional} size={140} />
-              <div className="stack" style={{ gap: 8, minWidth: 210 }}>
+              <div className="stack" style={{ gap: 8, minWidth: 0, flex: "1 1 200px" }}>
                 <div><div className="xs muted">Readiness band</div><BandTag band={score.band} provisional={score.provisional} /></div>
                 <div><div className="xs muted">Completeness</div>
                   <div className="row gap6"><div className="bar" style={{ width: 120 }}><span style={{ width: `${score.completeness}%` }} /></div><span className="num small strong">{score.completeness}%</span></div>

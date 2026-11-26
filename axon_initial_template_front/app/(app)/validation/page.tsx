@@ -63,7 +63,7 @@ function CaseBlock({ caseId, onToast }: { caseId: string; onToast: (m: string) =
 
   return (
     <section className="card" id={`case-${caseId}`}>
-      <div className="card-pad" style={{ display: "grid", gridTemplateColumns: "minmax(0,1fr) auto", gap: 20, alignItems: "center", borderBottom: "1px solid var(--line)" }}>
+      <div className="card-pad split" style={{ display: "grid", gridTemplateColumns: "minmax(0,1fr) auto", gap: 20, alignItems: "center", borderBottom: "1px solid var(--line)" }}>
         <div className="row gap16">
           <Avatar name={emp.name} lg dark />
           <div>
@@ -72,7 +72,7 @@ function CaseBlock({ caseId, onToast }: { caseId: string; onToast: (m: string) =
             <div className="row gap6" style={{ marginTop: 6 }}><GateChip passed={gate.passed} validated={gate.validated} total={gate.total} />{c.outcome && <HumanChip who={userName(db, c.tl_id) ?? "TL"} label={`Outcome ${OUTCOME_LABEL[c.outcome]}`} />}</div>
           </div>
         </div>
-        <div className="row gap16">
+        <div className="row gap16 score-side">
           <div style={{ textAlign: "right" }}><BandTag band={s.band} provisional={s.provisional} /><div className="xs muted" style={{ marginTop: 4 }}>Completeness {s.completeness}%</div></div>
           <ScoreRing score={s.score} band={s.band} size={96} capped={s.capped} provisional={s.provisional} />
         </div>
@@ -91,7 +91,7 @@ function CaseBlock({ caseId, onToast }: { caseId: string; onToast: (m: string) =
       )}
 
       <div style={{ padding: "4px 20px 8px" }}>
-        <table className="table">
+        <table className="table stack-sm">
           <thead><tr><th>Scope</th><th>Now</th><th>Proposal</th><th>Score impact</th><th className="tight">Decision</th></tr></thead>
           <tbody>
             {vals.map((v) => <ScopeRow key={v.id} v={v} onToast={onToast} />)}
@@ -120,11 +120,11 @@ function ScopeRow({ v, onToast }: { v: Validation; onToast: (m: string) => void 
   if (v.decided_level) {
     return (
       <tr>
-        <td><div className="strong small">{scope.name}</div><div className="xs muted">{scope.is_core ? "Core" : "Non-core"}</div></td>
-        <td><LevelTag level={scope.level} /></td>
-        <td className="small muted">AI proposed {LEVEL_LABEL[v.proposed_level]}</td>
-        <td className="small">{v.reason ? <span className="ink2">“{v.reason}”</span> : <span className="muted">Confirmed as proposed</span>}</td>
-        <td><HumanChip who={userName(db, v.decided_by) ?? "TL"} when={v.decided_at} label={v.decided_level === "validated" ? "Validated" : v.decided_level === confirmLevel(v.proposed_level) ? "Confirmed" : "Overridden"} /></td>
+        <td className="cell-head"><div className="strong small">{scope.name}</div><div className="xs muted">{scope.is_core ? "Core" : "Non-core"}</div></td>
+        <td data-label="Now"><LevelTag level={scope.level} /></td>
+        <td data-label="Proposal" className="small muted">AI proposed {LEVEL_LABEL[v.proposed_level]}</td>
+        <td data-label="Impact" className="small">{v.reason ? <span className="ink2">“{v.reason}”</span> : <span className="muted">Confirmed as proposed</span>}</td>
+        <td data-label="Decision"><HumanChip who={userName(db, v.decided_by) ?? "TL"} when={v.decided_at} label={v.decided_level === "validated" ? "Validated" : v.decided_level === confirmLevel(v.proposed_level) ? "Confirmed" : "Overridden"} /></td>
       </tr>
     );
   }
@@ -132,21 +132,21 @@ function ScopeRow({ v, onToast }: { v: Validation; onToast: (m: string) => void 
   return (
     <>
       <tr>
-        <td style={{ maxWidth: 260 }}>
+        <td className="cell-head" style={{ maxWidth: 260 }}>
           <button className="linkbtn row gap4" style={{ color: "var(--ink)", fontWeight: 650, textAlign: "left" }} onClick={() => setOpen((o) => !o)} aria-expanded={open}>
             {open ? <ChevronDown size={14} /> : <ChevronRight size={14} />}{scope.name}</button>
           <div className="xs muted" style={{ marginLeft: 18 }}>{scope.is_core ? "Core" : "Non-core"} · {ev.length} evidence item{ev.length === 1 ? "" : "s"}</div>
         </td>
-        <td><LevelTag level={scope.level} /></td>
-        <td style={{ maxWidth: 300 }}>
+        <td data-label="Now"><LevelTag level={scope.level} /></td>
+        <td data-label="Proposal" style={{ maxWidth: 300 }}>
           <div className="row gap6"><AiChip label={`AI: ${LEVEL_LABEL[v.proposed_level]}`} /><span className="xs muted">{Math.round(v.confidence * 100)}% confidence</span></div>
           <div className="xs ink2" style={{ marginTop: 4 }}>{v.rationale}</div>
         </td>
-        <td className="small nowrap">
+        <td data-label="Score impact" className="small nowrap">
           <div>Score <b className="num">{before.score ?? "–"}</b> → <b className="num">{after.score ?? "–"}</b></div>
           <div className="xs muted">Core validated {gAfter.validated}/{gAfter.total}{gAfter.passed ? " · cap lifts" : ""}</div>
         </td>
-        <td>
+        <td data-label="Decision">
           {!override ? (
             <div className="row gap6">
               <button className="btn sm primary" onClick={() => { decideValidation(v.id, confirmLevel(v.proposed_level), null); onToast(`${scope.name}: ${LEVEL_LABEL[confirmLevel(v.proposed_level)]}`); }} title={v.proposed_level === "independent" ? "Independent work confirmed by the TL becomes Validated" : undefined}>
@@ -157,8 +157,8 @@ function ScopeRow({ v, onToast }: { v: Validation; onToast: (m: string) => void 
         </td>
       </tr>
       {override && (
-        <tr><td colSpan={5} style={{ background: "rgba(89,53,175,.04)" }}>
-          <div className="grid" style={{ gridTemplateColumns: "220px 1fr auto", gap: 12, alignItems: "end" }}>
+        <tr className="row-full"><td colSpan={5} style={{ background: "rgba(89,53,175,.04)" }}>
+          <div className="grid split-sm" style={{ gridTemplateColumns: "220px 1fr auto", gap: 12, alignItems: "end" }}>
             <div className="field"><label>Level</label>
               <select className="select" value={lvl} onChange={(e) => setLvl(e.target.value as ScopeLevel)}>{LEVELS.map((l) => <option key={l} value={l}>{LEVEL_LABEL[l]}</option>)}</select>
               <span className="hint">{LEVEL_HINT[lvl]}</span></div>
@@ -173,7 +173,7 @@ function ScopeRow({ v, onToast }: { v: Validation; onToast: (m: string) => void 
         </td></tr>
       )}
       {open && (
-        <tr><td colSpan={5} style={{ background: "rgba(255,255,255,.5)" }}>
+        <tr className="row-full"><td colSpan={5} style={{ background: "rgba(255,255,255,.5)" }}>
           <div className="list">
             {ev.map((e) => (
               <div key={e.id} className="li small">
@@ -208,7 +208,7 @@ function OutcomePanel({ caseId, ready, onSet }: { caseId: string; ready: boolean
           <div className="small muted">{ready ? "Every core scope has your decision." : "Decide each core scope first."} Only you can set this; AXON never sets Ready on its own.</div></div>
         <div className="small">Score after: <b className="num">{preview.score}</b> <BandTag band={preview.band} /></div>
       </div>
-      <div className="grid" style={{ gridTemplateColumns: "auto 1fr 180px auto", gap: 12, alignItems: "end" }}>
+      <div className="grid split-md" style={{ gridTemplateColumns: "auto 1fr 180px auto", gap: 12, alignItems: "end" }}>
         <div className="field"><label>Outcome</label>
           <div className="seg">{(["ready", "ready_with_support", "partially_ready"] as Outcome[]).map((x) => <button key={x} className={o === x ? "on" : ""} onClick={() => setO(x)} disabled={!ready}>{OUTCOME_LABEL[x]}</button>)}</div></div>
         <div className="field"><label>Reason (required)</label><input className="input" disabled={!ready} value={reason} onChange={(e) => setReason(e.target.value)} placeholder={remaining.length ? `e.g. Standard work validated; ${remaining.map((s) => s.name.replace("Complex scenario: ", "")).join(" and ")} still to cover` : "What you observed"} /></div>
