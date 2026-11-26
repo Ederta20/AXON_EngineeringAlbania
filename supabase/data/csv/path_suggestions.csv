@@ -1,0 +1,7 @@
+id,path_id,suggestion,cause_flag_ids,status,approved_by
+ps-1,pa-nimbus,"Request Helix Service Desk access during pre-onboarding, not on start day.","{""fl-access_delay-ONB-002""}",proposed,
+ps-2,pa-orion,Add a KT topic for bulk data correction; no document covers it today.,"{""fl-conflict-ONB-005""}",proposed,
+ps-3,pa-vega,Book the final readiness review when the KT plan is approved.,"{""fl-missing_info-ONB-010""}",proposed,
+ps-4,pa-aurora,Write a short knowledge base upkeep guide; two people on this path rated docs 1-3.,"{""fl-missing_info-ONB-017""}",approved,u-pmo
+ps-5,pa-aurora,Move new hires from shadowing to supported tickets by day 10.,"{""fl-at_risk-ONB-019""}",proposed,
+ps-6,pa-nimbus,Give a fallback environment in the KT plan when the shared test environment is down.,"{""fl-blocked-ONB-020""}",rejected,u-pmo

@@ -1,0 +1,5 @@
+id,client_id,project_id,path_id,type,detail,effective_date,affected_case_ids,impact,status,submitted_by,approved_by,reason,created_at
+req-001,c-meridian,p-orion,pa-orion,skill,Complete PCI-DSS awareness training,2026-11-06,"{""ONB-015""}",1 case gets a new PCI-DSS awareness scope; 1 expected date moves earlier to 6 Nov.,approved,u-cm,u-admin,Contractual for Meridian from November.,2026-10-09
+req-002,c-meridian,p-orion,pa-orion,access,Meridian Secure Gateway access must be usable,2026-11-06,"{""ONB-015""}",1 case gets a Meridian Secure Gateway access item.,approved,u-cm,u-admin,Needed for the PCI scope.,2026-10-09
+req-003,c-meridian,p-vega,pa-vega,deadline,Everyone on Vega support ready by 30 Oct,2026-10-30,"{""ONB-010""}",1 expected readiness date set to 30 Oct (none recorded today).,submitted,u-cm,,,2026-10-13
+req-004,c-halden,p-pulse,pa-pulse,compliance,Background check renewal for all Pulse staff,,"{""ONB-008"",""ONB-014""}",2 cases get a compliance access item.,rejected,u-cm,u-admin,HR already tracks background checks outside onboarding.,2026-10-06

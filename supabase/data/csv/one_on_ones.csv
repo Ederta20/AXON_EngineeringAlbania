@@ -1,0 +1,11 @@
+id,case_id,rater_id,rating_human,rating_ai,note,held_at
+oo-005-1,ONB-005,u-tl-orion,8,8,Clear on the standard flow. Asked good questions on escalation. Less sure on outage steps.,2026-10-09
+oo-008-1,ONB-008,u-lm-mark,5,6,Progressing on pipelines. Mentioned waiting on something but no detail.,2026-10-10
+oo-010-1,ONB-010,u-lm-alex,6,7,Confident on routine work. Wants more practice on exceptions.,2026-10-08
+oo-004-1,ONB-004,u-pmo,6,6,Settling in on Helios. No manager to raise questions with yet.,2026-10-09
+oo-011-1,ONB-011,u-tl-vega,9,9,Explains every check and when to escalate. Ready.,2026-09-23
+oo-011-2,ONB-011,u-lm-alex,8,8,Confident and settled in the team.,2026-09-26
+oo-012-1,ONB-012,u-tl-orion,8,7,Solid on standard work; unsure on outage order of steps.,2026-10-06
+oo-014-1,ONB-014,u-lm-mark,8,4,Says everything is fine. Could not explain how to restart a failed load or who to call.,2026-10-13
+oo-015-1,ONB-015,u-tl-orion,6,6,Learning quickly; has not seen an incident alone yet.,2026-10-10
+oo-019-1,ONB-019,u-lm-jon,4,3,Still watching rather than doing. Not sure who to ask for help.,2026-10-08
