@@ -236,7 +236,8 @@ create table validations (
   reason         text,                        -- mandatory when overriding
   decided_at     date,
   decided_by     text references users(id),
-  constraint override_needs_reason check (decided_level is null or decided_level = proposed_level or reason is not null)
+  constraint override_needs_reason check (decided_level is null or decided_level = proposed_level
+    or (decided_level = 'validated' and proposed_level = 'independent') or reason is not null)
 );
 create index on validations (case_id);
 
