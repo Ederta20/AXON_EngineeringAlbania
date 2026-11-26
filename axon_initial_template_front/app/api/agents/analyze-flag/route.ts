@@ -7,7 +7,7 @@ import { A2_CACHE } from "@/lib/rules";
 
 export async function POST(req: Request) {
   const { flag_id } = z.object({ flag_id: z.string() }).parse(await req.json());
-  const f = getDb().flags.find((x) => x.id === flag_id);
+  const f = (await getDb()).flags.find((x) => x.id === flag_id);
   if (!f) return notFound("flag");
   const hit = A2_CACHE[flag_id];
   return json({ source: "mock", proposed: true, flag_id, cause_class: hit?.cause ?? null, suggested_owner: hit?.owner ?? null, sentence: hit?.sentence ?? null, status: hit ? "ok" : "needs_review" });

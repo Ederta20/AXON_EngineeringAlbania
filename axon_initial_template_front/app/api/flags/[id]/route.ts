@@ -9,8 +9,8 @@ const Body = z.object({
 }).strict();
 export async function PATCH(req: Request, { params }: { params: { id: string } }) {
   const { actor, ...b } = Body.parse(await req.json());
-  if (!getDb().flags.find((f) => f.id === params.id)) return notFound("flag");
-  const d = save((db) => {
+  if (!(await getDb()).flags.find((f) => f.id === params.id)) return notFound("flag");
+  const d = await save((db) => {
     const f = db.flags.find((x) => x.id === params.id)!;
     Object.assign(f, b);
     if (b.status === "resolved") { f.resolved_at = TODAY; db.resolved_flag_ids.push(f.id); }

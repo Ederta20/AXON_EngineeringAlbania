@@ -4,6 +4,6 @@ import { getDb, json } from "@/lib/server/db";
 
 export async function POST(req: Request) {
   const { path_id } = z.object({ path_id: z.string() }).parse(await req.json());
-  const db = getDb();
+  const db = await getDb();
   return json({ source: "mock", proposed: true, benchmarks: db.benchmarks.filter((b) => b.path_id === path_id), suggestions: db.path_suggestions.filter((s) => s.path_id === path_id) });
 }
