@@ -43,6 +43,12 @@ npx tsx connectors/collect/collect.ts ./mail.mbox --case ONB-002       # hint th
 
 The collector reads files only on your machine. AXON receives the text, but A1 stores only its summaries and a `source_ref`, never the raw content. It needs the app running (`npm run dev`) and uses `connectors/.env`. It writes a `collect-report-*.json` (summaries only; git ignores it). It doesn't sign in to a live mailbox: export mail as `.eml` or `.mbox` first.
 
+## Before the demo
+
+```bash
+npx tsx connectors/warmup.ts   # pre-runs A2, A3 and A8 on the seed so their answers are cached
+```
+
 ## Demo script (core flow, about 4 minutes)
 
 | Step | Sign in as | Do this |

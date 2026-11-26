@@ -8,6 +8,8 @@ import { callAgent } from "@/lib/ai/callAgent";
 import { PROMPTS } from "@/lib/ai/prompts";
 import { TODAY } from "@/lib/seed";
 
+export const maxDuration = 60; // model calls; Vercel cuts routes at 10 s by default
+
 const Out = z.object({
   channel: z.enum(["teams", "outlook"]),
   recipient: z.string(),

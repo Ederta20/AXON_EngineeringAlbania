@@ -6,6 +6,8 @@ import { getDb, json, notFound, save } from "@/lib/server/db";
 import { callAgent } from "@/lib/ai/callAgent";
 import { PROMPTS } from "@/lib/ai/prompts";
 
+export const maxDuration = 60; // model calls; Vercel cuts routes at 10 s by default
+
 const Out = z.object({
   scopes: z.array(z.object({
     scope_id: z.string(),

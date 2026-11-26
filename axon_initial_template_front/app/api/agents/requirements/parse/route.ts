@@ -7,6 +7,8 @@ import { parseRequirement } from "@/lib/agents";
 import { callAgent } from "@/lib/ai/callAgent";
 import { PROMPTS } from "@/lib/ai/prompts";
 
+export const maxDuration = 60; // model calls; Vercel cuts routes at 10 s by default
+
 const Card = z.object({
   client_id: z.string().nullable(), project_id: z.string(), path_id: z.string().nullable(),
   type: z.enum(["skill", "access", "deadline", "compliance", "scope"]), detail: z.string().max(300),

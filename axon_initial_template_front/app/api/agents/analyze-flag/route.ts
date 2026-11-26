@@ -7,6 +7,8 @@ import { A2_CACHE } from "@/lib/rules";
 import { callAgent } from "@/lib/ai/callAgent";
 import { PROMPTS } from "@/lib/ai/prompts";
 
+export const maxDuration = 60; // model calls; Vercel cuts routes at 10 s by default
+
 const Out = z.object({
   cause_class: z.enum(["process", "compliance", "external", "individual"]).nullable(),
   suggested_owner: z.string().nullable(),

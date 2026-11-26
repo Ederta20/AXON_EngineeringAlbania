@@ -5,8 +5,11 @@ import { z } from "zod";
 import { getDb, json, save } from "@/lib/server/db";
 import { callAgent } from "@/lib/ai/callAgent";
 import { PROMPTS } from "@/lib/ai/prompts";
+import { afterEvidence, openFlagIds, READINESS_KINDS } from "@/lib/server/pipeline";
 
-const In = z.object({ source_kind: z.enum(["email", "tracker", "checkin", "one_on_one", "pasted"]), source_ref: z.string(), text: z.string().max(4000), received_at: z.string(), case_hint: z.string().optional() });
+export const maxDuration = 60; // model calls; Vercel cuts routes at 10 s by default
+
+const In = z.object({ source_kind: z.enum(["email", "tracker", "checkin", "one_on_one", "pasted"]), source_ref: z.string(), text: z.string().max(4000), received_at: z.string(), case_hint: z.string().optional(), pipeline: z.boolean().optional() });
 const Out = z.object({
   case_id: z.string().nullable(),
   confidence: z.number().min(0).max(1),
@@ -51,8 +54,10 @@ export async function POST(req: Request) {
   const status = !c || o.confidence < 0.6 || r.status === "needs_review" ? "needs_review" : "ok";
   const stamp = Date.now().toString(36);
   const ids = c ? o.facts.map((_, i) => `ev-ai-${stamp}-${i}`) : [];
+  const before = openFlagIds(db);
+  let after: typeof db | null = null;
   if (c) {
-    await save((d) => {
+    after = await save((d) => {
       o.facts.forEach((f, i) => {
         const scope = f.scope_name ? d.scopes.find((s) => s.case_id === c.id && s.name.toLowerCase() === f.scope_name!.toLowerCase()) : null;
         const id = ids[i];
@@ -67,5 +72,9 @@ export async function POST(req: Request) {
       }
     }, { actor: r.agent, action: "extract_evidence", entity: "evidence", entity_id: ids.join(",") || "none", payload: { source_ref: b.source_ref, status }, agent: r.agent, model: r.model });
   }
-  return json({ source: r.source, status, proposed: true, evidence_ids: ids, ...o });
+  // Brief pipeline: rules reran in save(); A2 explains new flags, A3 reassesses on readiness evidence.
+  const pipeline = c && after && b.pipeline !== false && status === "ok"
+    ? await afterEvidence({ before, after, caseIds: [c.id], assessCaseIds: o.facts.some((f) => READINESS_KINDS.has(f.kind)) ? [c.id] : [] })
+    : null;
+  return json({ source: r.source, status, proposed: true, evidence_ids: ids, ...o, pipeline });
 }
