@@ -26,6 +26,23 @@ Node 18.17 or newer. `npm run build` must pass before every push.
 
 On Vercel, add the same variables under Project → Settings → Environment Variables. Agents whose prompt in `lib/ai/prompts.ts` still says `TODO:` return their mock answer.
 
+## Collect documents from a path
+
+Point the path collector at a folder (or one file). It finds every document in it and sends each one to A1, which matches it to a case and saves structured evidence:
+
+```bash
+npx tsx connectors/collect/collect.ts ~/exports/onboarding --dry-run   # list what it would read
+npx tsx connectors/collect/collect.ts ~/exports/onboarding             # send to A1
+npx tsx connectors/collect/collect.ts ./mail.mbox --case ONB-002       # hint the case
+```
+
+- **Emails:** `.eml` files and `.mbox` exports, with headers and the plain-text body (base64 and quoted-printable are decoded).
+- **Git repos:** the commit history (date, author, message) and the repo's Markdown docs. Code and data files are skipped.
+- **Notes and data:** `.txt`, `.md`, `.csv`, `.json`, `.log`, `.html`, `.xml`, `.yaml`. File names with "check-in", "1on1" or "tracker" set the evidence kind.
+- **Skipped:** `node_modules`, `.git`, `.env*`, files over 1 MB, and `.pdf`/`.docx`/`.xlsx`/`.pptx` (export them as text first).
+
+The collector reads files only on your machine. AXON receives the text, but A1 stores only its summaries and a `source_ref`, never the raw content. It needs the app running (`npm run dev`) and uses `connectors/.env`. It writes a `collect-report-*.json` (summaries only; git ignores it). It doesn't sign in to a live mailbox: export mail as `.eml` or `.mbox` first.
+
 ## Demo script (core flow, about 4 minutes)
 
 | Step | Sign in as | Do this |
