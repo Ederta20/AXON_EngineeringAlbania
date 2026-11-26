@@ -39,8 +39,24 @@ const r = await callAgent({ agent: "A3", system: PROMPTS.A3, input, schema: Out,
 | A4 Next-Action Drafter | `POST /api/agents/draft-action` | `{flag_id}` + flag, case, employee, LM/TL/owner, access items, `due_at` (from config) | `{channel, recipient, recipient_role, subject, body}` | `actions` row, `status = draft` | C4 drawer |
 | A6 1:1 Scorer | `POST /api/agents/score-1on1` | `{case_id, rater_id, rating_human, note}` + the rater's past ratings | `{rating_ai (1-10 integer), rationale}` | `one_on_ones` row; `rating_gap` flag if the gap is above `config.rating_gap` | L2 pop-up |
 | A10 Requirements Assistant | `POST /api/agents/requirements/parse` | `{text, project_hint?, user_id?}` + projects, paths, active cases | `{cards[{client_id, project_id, path_id, type, detail, effective_date, affected_case_ids, impact}], question}` | nothing (the manager submits, the Admin approves) | X7 |
-| A5 Reply Listener | `POST /api/webhooks/inbound`, `/api/ingest/replies` | `{thread_ref, text, received_at}` | rule-based today | `actions.status = answered`, evidence | C4 |
-| A7, A8, A9 | `/api/agents/challenges`, `report`, `improve` | see each route | mock today | follow the same pattern: add an `Out` schema, wrap the mock in `callAgent`, save with `save()` | X2, L3, X3 |
+| A5 Reply Listener | `POST /api/webhooks/inbound`, `/api/ingest/replies` (connector), `/api/agents/reply {action_id}` (in-app) | `{thread_ref, summary, received_at}` | matches the action by `thread_ref` (rules), then passes the text to **A1** | `actions.status = answered`, evidence via A1, then the pipeline | C4 "Simulate reply" |
+| A7 Challenge Generator | `POST /api/agents/challenges` | `{skill_id}` + skill metadata, role, existing challenges | `{challenges[2-3]{prompt}}` | `challenges` with `approved_by` empty | X2 "Draft challenges" |
+| A8 Report Writer | `POST /api/agents/report` | `{audience: management \| digest, user_id?}` + numbers computed in code | `{subject, text}`; any number not in the input is rejected | nothing | L3 "Write report" |
+| A9 Process Improver | `POST /api/agents/improve` | `{path_id}` + confirmed root causes; benchmark median computed in code | `{suggestions[]{suggestion, cause_flag_ids}}` | `benchmarks` (only with completion data), `path_suggestions` (proposed) | X3 "Suggest template changes" |
+
+## Pipeline: what runs when (brief, Part 5)
+`lib/server/pipeline.ts`. After new evidence is saved by A1 (`/api/agents/extract`), the connector ingest (`/api/ingest/evidence`) or A5:
+1. `save()` reruns the rules engine, so new flags appear.
+2. **A2** explains each new open flag (max 3 per request).
+3. **A3** reassesses the case when the new evidence is a task, TL review, 1:1 or check-in (max 2 cases per request). A6 also triggers A3 after a 1:1.
+
+`?pipeline=0` on `/api/ingest/evidence`, or `"pipeline": false` on `/api/agents/extract`, skips it for bulk replays.
+
+**A6 calibration** (brief: "AI score calibrated to that rater"): the model scores the rubric only (understanding, communication, confidence, issues raised); once the rater has 3 ratings, the route adds their average human-minus-AI offset. Arithmetic in code, never by the model.
+
+**Route time limit:** every agent route sets `maxDuration = 60`, because Vercel stops routes at 10 s by default.
+
+**Demo fallback:** `npx tsx connectors/warmup.ts` pre-runs A2, A3 and A8 on the seed so the answers are cached (`ai_cache`).
 
 ## Screens use the routes
 

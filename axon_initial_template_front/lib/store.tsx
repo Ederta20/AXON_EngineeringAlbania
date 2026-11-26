@@ -39,6 +39,9 @@ interface Store {
   confirmCause(flagId: string, cause: CauseClass): void;       // PATCH /api/flags/:id
   analyzeFlag(flagId: string): Promise<AgentRun>;              // POST /api/agents/analyze-flag (A2)
   assessReadiness(caseId: string): Promise<AgentRun>;          // POST /api/agents/assess (A3)
+  generateChallenges(skillId: string): Promise<AgentRun>;      // POST /api/agents/challenges (A7)
+  improvePath(pathId: string): Promise<AgentRun>;              // POST /api/agents/improve (A9)
+  writeReport(audience: "management" | "digest"): Promise<{ source: "ai" | "mock"; subject: string; text: string }>; // POST /api/agents/report (A8)
   resolveFlag(flagId: string, reason: string): void;           // PATCH /api/flags/:id {status: resolved}
   decideValidation(id: string, level: ScopeLevel, reason: string | null): void; // POST /api/validations/:id/decide
   setOutcome(caseId: string, outcome: Outcome, reason: string): void;          // POST /api/cases/:id/outcome
@@ -161,6 +164,10 @@ export function AxonProvider({ children }: { children: React.ReactNode }) {
       commit((d) => { const a = d.actions.find((x) => x.id === id)!; a.status = "rejected"; a.reject_reason = reason; }, { action: "reject_action", entity: "actions", entity_id: id, payload: { reason } });
     },
     simulateReply(actionId) {
+      if (API) { // A5 on the server: answered, A1 turns the reply into evidence, the pipeline follows
+        postAgent("/api/agents/reply", { action_id: actionId }).then(() => loadFromServer()).catch((e) => console.error("AXON: reply failed", e));
+        return;
+      }
       commit((d) => {
         const a = d.actions.find((x) => x.id === actionId)!;
         const c = d.cases.find((x) => x.id === a.case_id)!;
@@ -222,6 +229,30 @@ export function AxonProvider({ children }: { children: React.ReactNode }) {
       }
       await wait(900); // mock mode: the seeded proposals are already shown
       return { source: "mock", status: "ok" };
+    },
+
+    async generateChallenges(skillId) {
+      if (API) { // A7 drafts 2-3 challenges; the TL approves them before anyone sees them
+        const r = await postAgent<{ source: "ai" | "mock"; status: "ok" | "needs_review"; challenges: unknown[] }>("/api/agents/challenges", { skill_id: skillId });
+        await loadFromServer();
+        return { source: r.source, status: r.status, count: r.challenges.length };
+      }
+      await wait(700); return { source: "mock", status: "ok" };
+    },
+
+    async improvePath(pathId) {
+      if (API) { // A9: benchmark from completed cases (in code) + template changes from confirmed causes; the PMO approves
+        const r = await postAgent<{ source: "ai" | "mock"; status: "ok" | "needs_review"; suggestions: { status: string }[] }>("/api/agents/improve", { path_id: pathId });
+        await loadFromServer();
+        return { source: r.source, status: r.status, count: r.suggestions.filter((x) => x.status === "proposed").length };
+      }
+      await wait(700); return { source: "mock", status: "ok" };
+    },
+
+    async writeReport(audience) {
+      if (API) return postAgent<{ source: "ai" | "mock"; subject: string; text: string }>("/api/agents/report", { audience, user_id: user?.id }); // A8: numbers from code, words from the model
+      await wait(700);
+      return { source: "mock", subject: "AXON report (demo mode)", text: "Live reports need NEXT_PUBLIC_DATA_SOURCE=api. The numbers on this page are the same ones the report would use." };
     },
 
     async submitOneOnOne(caseId, rating, note) {
