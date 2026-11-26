@@ -8,6 +8,7 @@ import {
 import type { AccessState, Band, Flag, FlagType, ScopeLevel, Severity, Stage } from "@/lib/types";
 import { ACCESS_LABEL, BAND_LABEL, FLAG_LABEL, LEVELS, LEVEL_LABEL, SEVERITY_LABEL, STAGE_LABEL, OUTCOME_LABEL } from "@/lib/labels";
 import { fmtDate } from "@/lib/dates";
+import { Logo } from "./Logo";
 
 export const FLAG_ICON: Record<FlagType, LucideIcon> = {
   blocked: Ban, stale: Hourglass, conflict: GitCompareArrows, at_risk: AlertTriangle, unanswered: MailQuestion, missing_info: FileWarning,
@@ -46,33 +47,8 @@ export function Needed({ children, action }: { children: React.ReactNode; action
         <div className="txt">{children}</div>
       </div>
       {action && <div className="needed-act">{action}</div>}
-      <Crystal />
+      <Logo variant="hero" className="crystal" />
     </div>
-  );
-}
-
-/** Decorative glass crystal for hero banners (pure SVG, palette colors). */
-export function Crystal({ className = "crystal" }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 240 200" aria-hidden focusable="false">
-      <defs>
-        <linearGradient id="cx-a" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#FFFFFF" stopOpacity=".95" /><stop offset="1" stopColor="#B9A6EE" stopOpacity=".55" /></linearGradient>
-        <linearGradient id="cx-b" x1="1" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#8261D1" stopOpacity=".85" /><stop offset="1" stopColor="#354ED8" stopOpacity=".55" /></linearGradient>
-        <linearGradient id="cx-c" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#5935AF" stopOpacity=".9" /><stop offset="1" stopColor="#301B69" stopOpacity=".75" /></linearGradient>
-        <radialGradient id="cx-g" cx=".5" cy=".5" r=".5"><stop offset="0" stopColor="#FFFFFF" stopOpacity=".9" /><stop offset="1" stopColor="#FFFFFF" stopOpacity="0" /></radialGradient>
-      </defs>
-      <ellipse cx="128" cy="112" rx="104" ry="30" fill="none" stroke="#FFFFFF" strokeOpacity=".7" strokeWidth="1.2" transform="rotate(-12 128 112)" />
-      <ellipse cx="128" cy="112" rx="84" ry="22" fill="none" stroke="#8261D1" strokeOpacity=".35" strokeWidth="1" transform="rotate(-12 128 112)" />
-      <circle cx="128" cy="96" r="70" fill="url(#cx-g)" opacity=".7" />
-      <polygon points="128,18 178,70 128,176" fill="url(#cx-b)" />
-      <polygon points="128,18 78,70 128,176" fill="url(#cx-a)" />
-      <polygon points="78,70 128,92 178,70 128,176" fill="url(#cx-c)" opacity=".55" />
-      <polygon points="128,18 78,70 128,92 178,70" fill="#FFFFFF" opacity=".35" />
-      <polyline points="78,70 128,92 178,70" fill="none" stroke="#FFFFFF" strokeOpacity=".8" strokeWidth="1.2" />
-      <line x1="128" y1="92" x2="128" y2="176" stroke="#FFFFFF" strokeOpacity=".55" strokeWidth="1" />
-      <path d="M128 18 L178 70 L128 176 L78 70 Z" fill="none" stroke="#FFFFFF" strokeOpacity=".9" strokeWidth="1.4" strokeLinejoin="round" />
-      <g fill="#FFFFFF"><path d="M206 40l3 8 8 3-8 3-3 8-3-8-8-3 8-3z" opacity=".9" /><path d="M46 52l2 5 5 2-5 2-2 5-2-5-5-2 5-2z" opacity=".75" /><path d="M200 146l2 4 4 2-4 2-2 4-2-4-4-2 4-2z" opacity=".7" /></g>
-    </svg>
   );
 }
 

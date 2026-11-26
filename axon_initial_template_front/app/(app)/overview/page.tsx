@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AlertTriangle, Gauge, CalendarCheck, Flag, FilePlus2, Sparkles } from "lucide-react";
 import { useAxon } from "@/lib/store";
-import { atRisk, employee, openFlags, project, benchmarkStatus } from "@/lib/selectors";
+import { atRisk, employee, openFlags, benchmarkStatus } from "@/lib/selectors";
 import { computeScore } from "@/lib/score";
 import { CAUSE_LABEL } from "@/lib/labels";
 import type { CauseClass } from "@/lib/types";
@@ -89,7 +89,7 @@ export default function Overview() {
                   const s = computeScore(db, c.id); const f = openFlags(db, c.id)[0];
                   return (
                     <tr key={c.id} className="clickable" onClick={() => router.push(`/cases/${c.id}`)}>
-                      <td className="cell-head"><div className="row"><Avatar name={employee(db, c).name} /><div><div className="strong small nowrap">{employee(db, c).name}</div><div className="xs muted">{project(db, c.project_id)?.name ?? "No project"}</div></div></div></td>
+                      <td className="cell-head"><div className="row"><Avatar name={employee(db, c).name} /><div className="strong small nowrap">{employee(db, c).name}</div></div></td>
                       <td data-label="Stage"><StageTag stage={c.stage} /></td>
                       <td data-label="Score"><span className="num strong">{s.score ?? "–"}</span> <BandTag band={s.band} /></td>
                       <td data-label="Benchmark" className="small" style={{ color: "var(--sev-high)", fontWeight: 600 }}>{benchmarkStatus(db, c).label}</td>

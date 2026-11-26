@@ -19,6 +19,7 @@ import {
   AccessPipe, AiChip, Avatar, BandTag, Card, Empty, FlagTag, GateChip, HumanChip, LevelStepper, LevelTag, Needed, ScoreRing, SevTag, SimTag, StageTag, Toast,
 } from "@/components/ui";
 import { NextActionDrawer } from "@/components/NextActionDrawer";
+import { DocLink } from "@/components/DocLink";
 import { OneOnOneModal } from "@/components/OneOnOneModal";
 import { LineChart } from "@/components/charts";
 
@@ -84,7 +85,7 @@ export default function CaseDetail() {
             <div className="row gap16 top">
               <Avatar name={emp.name} lg dark />
               <div style={{ flex: 1 }}>
-                <div className="row gap6 wrap"><h1 style={{ margin: 0, fontSize: 24, letterSpacing: "-0.02em", color: "var(--midnight)" }}>{emp.name}</h1><span className="mono muted">{c.id}</span></div>
+                <div className="row gap6 wrap"><h1 style={{ margin: 0, fontSize: 24, letterSpacing: "-0.02em", color: "var(--midnight)" }}>{emp.name}</h1></div>
                 <div className="ink2" style={{ marginTop: 2 }}>
                   {proj ? `${proj.name} (${proj.code})` : <span className="missing"><AlertCircle size={13} />No project</span>} · {c.role ?? <span className="missing">No role</span>} · {MOVEMENT_LABEL[c.movement_type]}
                 </div>
@@ -239,7 +240,7 @@ export default function CaseDetail() {
               {db.doc_references.filter((d) => d.project_id === c.project_id).map((d) => (
                 <div key={d.id} className="li" style={{ alignItems: "center" }}>
                   <span className="avatar"><FolderOpen size={15} /></span>
-                  <div style={{ flex: 1 }}><div className="small strong">{d.title}</div><div className="src">{d.folder_ref}</div><div className="xs muted">Reference only, kept in the project folder · {d.verified_at ? `verified ${fmtDate(d.verified_at)}` : "not verified"}</div></div>
+                  <div style={{ flex: 1 }}><DocLink title={d.title} url={d.url} className="small strong" /><div className="src">{d.folder_ref}</div><div className="xs muted">Reference only, kept in the project folder · {d.verified_at ? `verified ${fmtDate(d.verified_at)}` : "not verified"}</div></div>
                 </div>
               ))}
             </div>

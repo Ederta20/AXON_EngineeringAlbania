@@ -3,7 +3,7 @@
 import { useAxon } from "@/lib/store";
 import { CAUSE_HINT, CAUSE_LABEL, FLAG_LABEL } from "@/lib/labels";
 import type { CauseClass } from "@/lib/types";
-import { employee, project } from "@/lib/selectors";
+import { employee } from "@/lib/selectors";
 import { AiChip, Card, Needed, PageHead, SimTag } from "@/components/ui";
 import { BarChart } from "@/components/charts";
 
@@ -42,7 +42,7 @@ export default function RootCause() {
                 const c = db.cases.find((x) => x.id === f.case_id)!;
                 return (
                   <tr key={f.id}>
-                    <td style={{ width: "34%" }}><div className="small strong">{FLAG_LABEL[f.type]} · {employee(db, c).name}</div><div className="xs muted">{project(db, c.project_id)?.name ?? "No project"} · {f.status}</div></td>
+                    <td style={{ width: "34%" }}><div className="small strong">{FLAG_LABEL[f.type]} · {employee(db, c).name}</div><div className="xs muted">{f.status}</div></td>
                     <td><div className="small ink2">{f.root_cause ?? f.detail}</div><div className="row gap6" style={{ marginTop: 4 }}><span className="tag outline xs" title={f.cause_class ? CAUSE_HINT[f.cause_class] : ""}>{f.cause_class ? CAUSE_LABEL[f.cause_class] : "Unclassified"}</span>{!f.cause_confirmed && f.cause_class && <AiChip label="AI" />}</div></td>
                   </tr>
                 );

@@ -77,7 +77,7 @@ function CaseBlock({ caseId, onToast }: { caseId: string; onToast: (m: string) =
         <div className="row gap16">
           <Avatar name={emp.name} lg dark />
           <div>
-            <div className="row gap6"><Link href={`/cases/${caseId}`} style={{ fontSize: 18, fontWeight: 720, color: "var(--midnight)" }}>{emp.name}</Link><span className="mono muted">{caseId}</span></div>
+            <div className="row gap6"><Link href={`/cases/${caseId}`} style={{ fontSize: 18, fontWeight: 720, color: "var(--midnight)" }}>{emp.name}</Link></div>
             <div className="small ink2">{project(db, c.project_id)?.name} · {c.role} · started {fmtDate(c.start_date)} · expected ready {fmtDate(c.expected_ready_date)}</div>
             <div className="row gap6" style={{ marginTop: 6 }}><GateChip passed={gate.passed} validated={gate.validated} total={gate.total} />{c.outcome && <HumanChip who={userName(db, c.tl_id) ?? "TL"} label={`Outcome ${OUTCOME_LABEL[c.outcome]}`} />}
               {!c.outcome && <button className="btn sm" onClick={runAssessment} disabled={assessing} title="The Readiness Assessor (A3) reads the latest evidence and proposes a level per scope. Only you decide.">

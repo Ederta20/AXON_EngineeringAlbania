@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Orion service desk playbook · Fictional demo document</title><meta name="robots" content="noindex"><style>body{margin:0;background:#F4F2FA;font:15px/1.6 ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;color:#1B1433}
+main{max-width:760px;margin:0 auto;padding:28px 20px 60px}
+.demo{background:#FFF3E2;color:#8A5200;border:1px solid #F3D9B0;border-radius:10px;padding:8px 12px;font-size:13px;font-weight:600;margin-bottom:20px}
+article{background:#fff;border:1px solid #EEEBF6;border-radius:16px;padding:28px 32px}
+h1{font-size:24px;line-height:1.25;margin:0 0 6px;color:#190D38;letter-spacing:-.01em}
+.meta{color:#6A6485;font-size:13px;margin:0 0 20px}
+h2{font-size:16px;color:#301B69;margin:24px 0 6px}
+ol,ul{padding-left:22px;margin:6px 0}li{margin:3px 0}
+table{border-collapse:collapse;width:100%;font-size:14px;margin:8px 0}th,td{text-align:left;padding:7px 10px;border-bottom:1px solid #EEEBF6}th{color:#6A6485;font-weight:600;background:#FAF9FE}
+code{font-family:ui-monospace,Menlo,monospace;font-size:13px;background:#F5F2FF;padding:1px 5px;border-radius:5px}
+@media (max-width:600px){article{padding:20px 18px}}</style></head>
+<body><main>
+<div class="demo">Fictional demo document. Written for the AXON prototype; it describes no real company, system or process.</div>
+<article>
+<h1>Orion service desk playbook</h1>
+<p class="meta">Project Orion (ORI-330) · Owner: Ada Quinn, Tech Lead · Folder: /Orion/ServiceDesk/KT · Verified 20 Sep 2026</p>
+<h2>1. Purpose</h2>
+<p>How a Service Desk Analyst on Orion handles requests and incidents for the client, from the first ticket to working independently. Use it with your KT plan; your Tech Lead confirms each level.</p>
+<h2>2. Standard service requests</h2>
+<ol>
+<li>Pick the oldest unassigned ticket in the <code>ORI-Requests</code> queue.</li>
+<li>Check the requester and the catalogue item. Password resets, access to shared folders and software installs follow the catalogue steps.</li>
+<li>Write what you did in the ticket in plain words, then resolve it. The requester gets an automatic note.</li>
+<li>If the catalogue has no step for it, ask in the team channel before you improvise.</li>
+</ol>
+<h2>3. Incident triage</h2>
+<ul>
+<li><b>P1</b>: several users or a whole service down. Start the <i>Major incident procedure</i> at once.</li>
+<li><b>P2</b>: one service degraded for a team. Assign to second line within 30 minutes.</li>
+<li><b>P3/P4</b>: one user, a workaround exists. Handle in the queue.</li>
+</ul>
+<h2>4. Complex scenarios (covered in KT with your Tech Lead)</h2>
+<table><tr><th>Scenario</th><th>What you practise</th></tr>
+<tr><td>Multi-system outage</td><td>Link related tickets, keep one master incident, update the status page every 30 minutes.</td></tr>
+<tr><td>Bulk data correction</td><td>Use the approved script only, get a second pair of eyes, log every changed record.</td></tr></table>
+<h2>5. Reporting and shift handover</h2>
+<p>Before you leave, post the open P1/P2 list and anything waiting on a third party in the handover note. The next shift reads it first.</p>
+</article>
+</main></body></html>

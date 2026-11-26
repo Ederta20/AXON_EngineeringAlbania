@@ -268,12 +268,12 @@ const stage_history: StageHistory[] = [
 ];
 
 const doc_references: DocReference[] = [
-  { id: "doc-atlas-1", project_id: "p-atlas", path_id: "pa-atlas", title: "Atlas training guide", folder_ref: "/Team/Operations/Onboarding", owner_label: "Ben Royce (KT owner)", verified_at: "2026-10-11" },
-  { id: "doc-atlas-2", project_id: "p-atlas", path_id: "pa-atlas", title: "Atlas runbook", folder_ref: "/Team/Operations/Onboarding", owner_label: "Ben Royce (KT owner)", verified_at: "2026-10-11" },
-  { id: "doc-orion-1", project_id: "p-orion", path_id: "pa-orion", title: "Orion service desk playbook", folder_ref: "/Orion/ServiceDesk/KT", owner_label: "Ada Quinn", verified_at: "2026-09-20" },
-  { id: "doc-orion-2", project_id: "p-orion", path_id: "pa-orion", title: "Major incident procedure", folder_ref: "/Orion/ServiceDesk/Incidents", owner_label: "Ada Quinn", verified_at: null },
-  { id: "doc-vega-1", project_id: "p-vega", path_id: "pa-vega", title: "Vega change process", folder_ref: "/Vega/Support/Changes", owner_label: "Rhea Vance", verified_at: "2026-09-30" },
-  { id: "doc-nimbus-1", project_id: "p-nimbus", path_id: "pa-nimbus", title: "Nimbus integration overview", folder_ref: "/Nimbus/Engineering/Onboarding", owner_label: "Petra Lind", verified_at: "2026-10-01" },
+  { id: "doc-atlas-1", project_id: "p-atlas", path_id: "pa-atlas", title: "Atlas training guide", folder_ref: "/Team/Operations/Onboarding", owner_label: "Ben Royce (KT owner)", verified_at: "2026-10-11", url: null },
+  { id: "doc-atlas-2", project_id: "p-atlas", path_id: "pa-atlas", title: "Atlas runbook", folder_ref: "/Team/Operations/Onboarding", owner_label: "Ben Royce (KT owner)", verified_at: "2026-10-11", url: "/docs/atlas-runbook.html" },
+  { id: "doc-orion-1", project_id: "p-orion", path_id: "pa-orion", title: "Orion service desk playbook", folder_ref: "/Orion/ServiceDesk/KT", owner_label: "Ada Quinn", verified_at: "2026-09-20", url: "/docs/orion-service-desk-playbook.html" },
+  { id: "doc-orion-2", project_id: "p-orion", path_id: "pa-orion", title: "Major incident procedure", folder_ref: "/Orion/ServiceDesk/Incidents", owner_label: "Ada Quinn", verified_at: null, url: "/docs/major-incident-procedure.html" },
+  { id: "doc-vega-1", project_id: "p-vega", path_id: "pa-vega", title: "Vega change process", folder_ref: "/Vega/Support/Changes", owner_label: "Rhea Vance", verified_at: "2026-09-30", url: "/docs/vega-change-process.html" },
+  { id: "doc-nimbus-1", project_id: "p-nimbus", path_id: "pa-nimbus", title: "Nimbus integration overview", folder_ref: "/Nimbus/Engineering/Onboarding", owner_label: "Petra Lind", verified_at: "2026-10-01", url: null },
 ];
 
 const skills: Skill[] = [

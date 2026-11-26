@@ -4,7 +4,7 @@
 import { useRouter } from "next/navigation";
 import { Check, X } from "lucide-react";
 import { useAxon } from "@/lib/store";
-import { employee, project, userName } from "@/lib/selectors";
+import { employee } from "@/lib/selectors";
 import { fmtDate } from "@/lib/dates";
 import { TODAY } from "@/lib/seed";
 import { MOVEMENT_LABEL } from "@/lib/labels";
@@ -33,7 +33,7 @@ export default function Starts() {
             <tbody>
               {rows.map(({ c, checks }) => (
                 <tr key={c.id} className="clickable" onClick={() => router.push(`/cases/${c.id}`)}>
-                  <td><div className="row"><Avatar name={employee(db, c).name} /><div><div className="strong small nowrap">{employee(db, c).name}</div><div className="xs muted"><span className="mono">{c.id}</span> · {project(db, c.project_id)?.name ?? "No project"} · LM {userName(db, c.line_manager_id) ?? "none"}</div></div></div></td>
+                  <td><div className="row"><Avatar name={employee(db, c).name} /><div className="strong small nowrap">{employee(db, c).name}</div></div></td>
                   <td className="small">{MOVEMENT_LABEL[c.movement_type]}</td>
                   <td className="small nowrap">{fmtDate(c.start_date)}</td>
                   <td><StageTag stage={c.stage} outcome={c.outcome} /></td>

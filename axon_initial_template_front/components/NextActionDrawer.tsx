@@ -65,7 +65,7 @@ export function NextActionDrawer({ flagId, onClose }: { flagId: string | null; o
 
   return (
     <Drawer open={!!flagId} onClose={onClose} title="Next action"
-      sub={<span className="row gap6 wrap"><FlagTag type={flag.type} severity={flag.severity} /><SevTag s={flag.severity} /><span>{emp.name} · <span className="mono">{c.id}</span></span></span>}
+      sub={<span className="row gap6 wrap"><FlagTag type={flag.type} severity={flag.severity} /><SevTag s={flag.severity} /><span>{emp.name}</span></span>}
       foot={foot}>
       <div className="claim small ink2"><b style={{ color: "var(--ink)" }}>Gap:</b> {flag.detail}{flag.root_cause && <><br /><b style={{ color: "var(--ink)" }}>Likely cause:</b> {flag.root_cause}</>}</div>
 

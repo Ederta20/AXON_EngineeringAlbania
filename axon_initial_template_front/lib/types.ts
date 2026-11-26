@@ -227,6 +227,9 @@ export interface DocReference {
   folder_ref: string;
   owner_label: string;
   verified_at: string | null;
+  /** Link that opens the document (SharePoint from the Doc agent; /docs/... for demo pages). Never the content itself.
+   *  DB: add column `url text null` to doc_references (not in the Supabase schema yet). Optional until then. */
+  url?: string | null;
 }
 
 export interface Skill { id: string; path_id: string; name: string; doc_ref: string | null; coverage: number; last_updated: string }

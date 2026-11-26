@@ -2,7 +2,7 @@
 import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Flag, Users, ShieldCheck, Route, LayoutDashboard, KeyRound, MessageSquareText, BookOpen, Puzzle, BarChart3, Search,
   UserPlus, Settings2, FileText, ChevronDown, RotateCcw, CalendarClock, LogOut, Menu, X, Bell, Gauge, AlertTriangle, Clock3, ArrowRight,
@@ -11,6 +11,7 @@ import { useAxon } from "@/lib/store";
 import type { Db, Role, User } from "@/lib/types";
 import { ROLE_LABEL } from "@/lib/labels";
 import { Avatar } from "./ui";
+import { Logo } from "./Logo";
 import { atRisk, casesFor, employee, openFlags } from "@/lib/selectors";
 import { tlGate } from "@/lib/score";
 import { TODAY } from "@/lib/seed";
@@ -24,7 +25,7 @@ export function homeFor(role: Role) {
 
 const BrandMark = ({ size = 32 }: { size?: number }) => (
   <div className="brand-mark" style={{ width: size, height: size }}>
-    <svg width={size * 0.5} height={size * 0.5} viewBox="0 0 16 16" aria-hidden><path d="M2 14 8 2l6 12M4.6 9h6.8" stroke="#fff" strokeWidth="1.9" fill="none" strokeLinecap="round" strokeLinejoin="round" /></svg>
+    <Logo size={Math.round(size * 0.62)} />
   </div>
 );
 
@@ -101,7 +102,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
           <aside className="sidebar" id="axon-nav">
             <div className="brand">
               <BrandMark />
-              <div style={{ flex: 1, minWidth: 0 }}><div className="brand-name">AXON</div><div className="brand-sub">Onboarding and KT</div></div>
+              <div style={{ flex: 1, minWidth: 0 }}><div className="brand-name">eng</div><div className="brand-sub">Onboarding and KT</div></div>
               <button className="btn icon ghost sm nav-close" onClick={() => setNavOpen(false)} aria-label="Close menu"><X size={17} /></button>
             </div>
 
@@ -117,8 +118,6 @@ export function Shell({ children }: { children: React.ReactNode }) {
                 );
               })}
             </nav>
-
-            <RecentActivity db={db} user={user} />
 
             <SummaryCard db={db} user={user} />
 
@@ -148,39 +147,6 @@ export function Shell({ children }: { children: React.ReactNode }) {
           );
         })}
       </nav>
-    </div>
-  );
-}
-
-const ACTION_LABEL: Record<string, string> = {
-  draft_action: "AI drafted a next action", approve_action: "Next action approved", delivered: "Message delivered", reject_action: "Draft rejected",
-  reply_ingested: "Reply received", assign_owner: "Owner assigned", confirm_cause: "Root cause confirmed", resolve_flag: "Flag resolved",
-  validate_scope: "Scope decided by TL", set_outcome: "Outcome set by TL", one_on_one: "1:1 rated", checkin: "Check-in sent",
-  access_usable: "Access confirmed usable", access_problem: "Access problem reported", report_blocker: "Blocker reported",
-  submit_requirements: "Requirements submitted", approve_requirement: "Requirement approved", reject_requirement: "Requirement rejected",
-  update_profile: "Weights updated", update_config: "Thresholds updated", approve_challenge: "Challenge approved", decide_suggestion: "Path suggestion decided",
-};
-
-/** Session actions first (audit log), then the latest evidence the connectors sent. Employees only see their own case. */
-function RecentActivity({ db, user }: { db: Db; user: User }) {
-  const rows = useMemo(() => {
-    const own = user.role === "employee" ? user.case_id : null;
-    const audit = db.audit_log.slice(-4).reverse().map((a) => ({
-      id: a.id, title: ACTION_LABEL[a.action] ?? a.action.replace(/_/g, " "), meta: a.actor.startsWith("agent:") ? a.actor.slice(6) : a.actor.split(" (")[0],
-      tone: a.actor.startsWith("agent:") ? "ai" : a.actor.startsWith("connector:") ? "blue" : "ok",
-    }));
-    const scope = own ? casesFor(db, user).map((c) => c.id) : null;
-    const ev = db.evidence.filter((e) => !scope || scope.includes(e.case_id)).slice().sort((a, b) => b.occurred_at.localeCompare(a.occurred_at)).slice(0, 4 - Math.min(audit.length, 4))
-      .map((e) => ({ id: e.id, title: e.summary, meta: `${e.author_label.split(" (")[0]} · ${fmtDate(e.occurred_at)}`, tone: e.disputed ? "high" : "violet" }));
-    return [...audit, ...ev].slice(0, 4);
-  }, [db, user]);
-  if (!rows.length) return null;
-  return (
-    <div className="nav-group">
-      <div className="nav-label"><ChevronDown size={12} />Recent activity</div>
-      <ul className="activity">
-        {rows.map((r) => <li key={r.id}><i className={`dot ${r.tone}`} aria-hidden /><div style={{ minWidth: 0 }}><div className="ellipsis">{r.title}</div><div className="xs muted ellipsis">{r.meta}</div></div></li>)}
-      </ul>
     </div>
   );
 }
@@ -251,7 +217,7 @@ function CaseSearch() {
         <div className="menu search-menu" role="listbox">
           {hits.length === 0 ? <div className="small muted" style={{ padding: 10 }}>No onboarding matches “{q}”.</div> : hits.map((c) => {
             const e = employee(db, c);
-            return <button key={c.id} className="mi" onClick={() => go(c.id)} role="option" aria-selected={false}><Avatar name={e.name} /><span style={{ flex: 1 }}><span style={{ display: "block", fontWeight: 640 }}>{e.name}</span><span className="xs muted mono">{c.id}</span></span><ArrowRight size={14} color="var(--violet)" /></button>;
+            return <button key={c.id} className="mi" onClick={() => go(c.id)} role="option" aria-selected={false}><Avatar name={e.name} /><span style={{ flex: 1, fontWeight: 640 }}>{e.name}</span><ArrowRight size={14} color="var(--violet)" /></button>;
           })}
         </div>
       )}
@@ -317,7 +283,7 @@ function TopBar({ onMenu, menuOpen, alerts }: { onMenu: () => void; menuOpen: bo
                   const u = db.users.find((x) => x.id === id)!;
                   return (
                     <button key={id} className={`mi ${u.id === user.id ? "on" : ""}`} onClick={() => pick(id)} role="menuitem">
-                      <Avatar name={u.name} /><span><span style={{ display: "block", fontWeight: 640 }}>{u.name}</span><span className="xs muted">{u.title}{u.case_id ? ` · ${u.case_id}` : ""}</span></span>
+                      <Avatar name={u.name} /><span><span style={{ display: "block", fontWeight: 640 }}>{u.name}</span><span className="xs muted">{u.title}</span></span>
                     </button>
                   );
                 })}

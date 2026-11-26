@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Flag as FlagIc, Hourglass, AlarmClock, MailQuestion, Wand2, Check, UserRoundCog, Sparkles } from "lucide-react";
 import { useAxon } from "@/lib/store";
-import { openFlags, employee, project } from "@/lib/selectors";
+import { openFlags, employee } from "@/lib/selectors";
 import { daysAgo, fmtDate } from "@/lib/dates";
 import { TODAY } from "@/lib/seed";
 import { CAUSE_HINT, CAUSE_LABEL, FLAG_LABEL } from "@/lib/labels";
@@ -122,7 +122,7 @@ export default function FlagsBoard() {
                     return (
                       <tr key={f.id} className={`clickable ${sel.includes(f.id) ? "sel" : ""}`} onClick={() => router.push(`/cases/${c.id}?flag=${f.id}`)}>
                         {!readOnly && <td className="cell-check" onClick={(ev) => ev.stopPropagation()}><input type="checkbox" className="check" aria-label={`Select ${e.name}`} checked={sel.includes(f.id)} onChange={(ev) => setSel((s) => ev.target.checked ? [...s, f.id] : s.filter((x) => x !== f.id))} /></td>}
-                        <td className="cell-head" style={{ minWidth: 170 }}><div className="row"><Avatar name={e.name} /><div><div className="strong nowrap">{e.name}</div><div className="xs muted"><span className="mono">{c.id}</span> · {project(db, c.project_id)?.name ?? "No project"}</div></div></div></td>
+                        <td className="cell-head" style={{ minWidth: 170 }}><div className="row"><Avatar name={e.name} /><div className="strong nowrap">{e.name}</div></div></td>
                         <td className="cell-full" style={{ maxWidth: 340 }}><FlagTag type={f.type} severity={f.severity} /><div className="small ink2" style={{ marginTop: 4 }}>{f.detail}</div></td>
                         <td data-label="Cause class" onClick={(ev) => ev.stopPropagation()}>
                           {f.cause_class ? (

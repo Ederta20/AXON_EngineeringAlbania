@@ -5,7 +5,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Star, TrendingDown, TrendingUp } from "lucide-react";
 import { useAxon } from "@/lib/store";
-import { atRisk, benchmarkStatus, casesFor, employee, openFlags, project } from "@/lib/selectors";
+import { atRisk, benchmarkStatus, casesFor, employee, openFlags } from "@/lib/selectors";
 import { computeScore } from "@/lib/score";
 import { Avatar, BandTag, Card, Empty, FlagTag, Needed, PageHead, Seg, StageTag, Toast } from "@/components/ui";
 import { OneOnOneModal } from "@/components/OneOnOneModal";
@@ -47,7 +47,7 @@ export default function MyPeople() {
               <div key={c.id} className="card" style={{ display: "flex", flexDirection: "column" }}>
                 <Link href={`/cases/${c.id}`} className="card-pad" style={{ color: "inherit", textDecoration: "none", flex: 1 }}>
                   <div className="row between top">
-                    <div className="row"><Avatar name={e.name} /><div><div className="strong">{e.name}</div><div className="xs muted"><span className="mono">{c.id}</span> · {project(db, c.project_id)?.name ?? "No project"}</div></div></div>
+                    <div className="row"><Avatar name={e.name} /><div className="strong">{e.name}</div></div>
                     {showScore && <div style={{ textAlign: "right" }}><div className="num" style={{ fontSize: 26, fontWeight: 760, color: "var(--midnight)", lineHeight: 1 }}>{s.score ?? "–"}</div><div className="xs muted">{s.provisional && s.score != null ? "provisional" : s.capped ? "capped" : "score"}</div></div>}
                   </div>
                   <div className="row wrap gap6" style={{ marginTop: 12 }}><StageTag stage={c.stage} outcome={c.outcome} />{showScore && <BandTag band={s.band} />}</div>

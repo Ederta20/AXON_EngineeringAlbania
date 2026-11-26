@@ -11,6 +11,7 @@ import { TODAY } from "@/lib/seed";
 import { LEVELS, LEVEL_HINT, LEVEL_LABEL, OUTCOME_LABEL, STAGE_LABEL, FLAG_LABEL } from "@/lib/labels";
 import type { Stage } from "@/lib/types";
 import { Avatar, Card, Empty, LevelStepper, LevelTag, Needed, PageHead, Toast } from "@/components/ui";
+import { DocLink } from "@/components/DocLink";
 
 const TRACK: Stage[] = ["pre_onboarding", "setup", "in_kt", "awaiting_validation", "outcome", "closed"];
 const STEP_ICON = { access: KeyRound, kt: Users, checkin: MessageCircle, doc: BookOpen, wait: Hourglass };
@@ -121,7 +122,7 @@ export default function MyPath() {
           <Card title="Documents" sub="Links point to the project folder. Nothing is copied.">
             {docs.length === 0 ? <Empty title="No documents referenced yet" icon={<FolderOpen size={18} />} /> : (
               <div className="list">{docs.map((d) => (
-                <div key={d.id} className="li"><FolderOpen size={16} color="var(--deep)" /><div><div className="small strong">{d.title}</div><div className="src">{d.folder_ref}</div></div></div>
+                <div key={d.id} className="li"><FolderOpen size={16} color="var(--deep)" /><div><DocLink title={d.title} url={d.url} className="small strong" /><div className="src">{d.folder_ref}</div></div></div>
               ))}</div>
             )}
           </Card>

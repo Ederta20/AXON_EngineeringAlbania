@@ -5,6 +5,7 @@ import { useAxon } from "@/lib/store";
 import { project } from "@/lib/selectors";
 import { fmtDate } from "@/lib/dates";
 import { AiChip, Card, Empty, Needed, PageHead, SimTag } from "@/components/ui";
+import { DocLink } from "@/components/DocLink";
 
 export default function Skills() {
   const { db, user } = useAxon();
@@ -30,7 +31,7 @@ export default function Skills() {
                   return (
                     <tr key={s.id}>
                       <td className="strong small">{s.name}</td>
-                      <td>{d ? <span className="row gap6"><FolderOpen size={14} color="var(--deep)" /><span><span className="small">{d.title}</span><div className="src">{d.folder_ref}</div></span></span>
+                      <td>{d ? <span className="row gap6"><FolderOpen size={14} color="var(--deep)" /><span><DocLink title={d.title} url={d.url} className="small" /><div className="src">{d.folder_ref}</div></span></span>
                         : <span className="row gap6 small" style={{ color: "var(--sev-high)", fontWeight: 600 }}><FileQuestion size={14} />No document</span>}</td>
                       <td><span className="row gap6"><div className={`bar ${s.coverage < 50 ? "" : "hl"}`} style={{ flex: 1 }}><span style={{ width: `${s.coverage}%`, background: s.coverage < 50 ? "var(--sev-high)" : undefined }} /></div><span className="num small strong">{s.coverage}%</span></span></td>
                       <td className="small muted nowrap">{fmtDate(s.last_updated)}</td>
