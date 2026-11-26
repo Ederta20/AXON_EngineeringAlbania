@@ -4,7 +4,7 @@ import { computeScore } from "@/lib/score";
 
 export const dynamic = "force-dynamic";
 export async function GET(_req: Request, { params }: { params: { id: string } }) {
-  const db = getDb();
+  const db = await getDb();
   const c = db.cases.find((x) => x.id === params.id);
   if (!c) return notFound("case");
   const by = <T extends { case_id: string }>(xs: T[]) => xs.filter((x) => x.case_id === c.id);

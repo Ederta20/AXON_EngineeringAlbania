@@ -37,7 +37,7 @@ const toScopeLevel = (l: Proposed): ScopeLevel => (l === "ready_with_support" ? 
 
 export async function POST(req: Request) {
   const { case_id } = z.object({ case_id: z.string() }).parse(await req.json());
-  const db = getDb();
+  const db = await getDb();
   const scopes = db.scopes.filter((s) => s.case_id === case_id).map((s) => ({ id: s.id, name: s.name, is_core: s.is_core, level: s.level }));
   const evidence = db.evidence
     .filter((e) => e.case_id === case_id)
@@ -61,7 +61,7 @@ export async function POST(req: Request) {
     .map((s) => ({ ...s, evidence_ids: s.evidence_ids.filter((id) => evIds.has(id)) }));
 
   const caseRow = db.cases.find((c) => c.id === case_id);
-  save((d) => {
+  await save((d) => {
     for (const s of out.scopes) {
       d.validations.push({
         id: `va-ai-${Date.now().toString(36)}-${d.validations.length}`, case_id, scope_id: s.scope_id, tl_id: caseRow?.tl_id ?? null,

@@ -8,7 +8,7 @@ const Skill = z.object({ path_id: z.string(), name: z.string(), folder_ref: z.st
 export const POST = guard(async (req) => {
   const { connector, body } = await verifyConnector(req);
   const items = z.array(Skill).max(200).parse(body.items);
-  save((db) => {
+  await save((db) => {
     for (const s of items) {
       const doc = s.folder_ref ? db.doc_references.find((d) => d.folder_ref === s.folder_ref) : null;
       const ex = db.skills.find((x) => x.path_id === s.path_id && x.name === s.name);

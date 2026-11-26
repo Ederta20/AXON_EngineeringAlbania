@@ -26,7 +26,7 @@ export async function POST(req: Request) {
   const items = parsed.data.items;
 
   const unmatched: string[] = [];
-  save((db) => {
+  await save((db) => {
     for (const e of items) {
       const c = db.cases.find((x) => x.id === e.case_ref) ?? db.cases.find((x) => db.projects.find((p) => p.id === x.project_id)?.code === e.case_ref);
       if (!c) { unmatched.push(e.source_ref); console.warn(`[ingest] no case for ${e.case_ref} (${e.source_ref})`); continue; }

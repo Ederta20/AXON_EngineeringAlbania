@@ -22,7 +22,7 @@ export async function callAgent<T>(system: string, input: string, schema: object
   const key = createHash("sha256").update(opts.agent + system + input).digest("hex");
   const useCache = process.env.AI_CACHE === "on";
   if (useCache) {
-    const hit = aiCache.get(key);
+    const hit = await aiCache.get(key);
     if (hit !== undefined) return hit as T;
   }
 
@@ -51,7 +51,7 @@ export async function callAgent<T>(system: string, input: string, schema: object
     throw new AgentError(opts.agent, e);
   }
 
-  if (useCache) aiCache.upsert(key, output);
-  audit(`agent:${opts.agent}`, "ai_call", { model, inputIds: opts.inputIds ?? [] });
+  if (useCache) await aiCache.upsert(key, output);
+  await audit(`agent:${opts.agent}`, "ai_call", { model, inputIds: opts.inputIds ?? [] });
   return output;
 }
