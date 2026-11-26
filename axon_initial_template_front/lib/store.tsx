@@ -130,6 +130,11 @@ export function AxonProvider({ children }: { children: React.ReactNode }) {
     reset: () => { if (API) loadFromServer().catch((e) => console.error(e)); else setDb(fresh()); }, // api mode: reload from the database
 
     async draftNextAction(flagId) {
+      if (API) { // A4 runs on the server (real model when configured) and saves the draft
+        const a = await postAgent<{ id: string }>("/api/agents/draft-action", { flag_id: flagId });
+        await loadFromServer();
+        return a.id;
+      }
       await wait(900); // model latency, so the "drafting" state is visible
       const flag = dbRef.current.flags.find((f) => f.id === flagId)!;
       const draft = a4(dbRef.current, flag);
@@ -195,6 +200,11 @@ export function AxonProvider({ children }: { children: React.ReactNode }) {
     },
 
     async submitOneOnOne(caseId, rating, note) {
+      if (API) { // A6 scores the note on the server and saves the 1:1 (and a rating_gap flag if needed)
+        const r = await postAgent<{ rating_ai: number; gap: boolean }>("/api/agents/score-1on1", { case_id: caseId, rater_id: user?.id ?? "u-pmo", rating_human: rating, note });
+        await loadFromServer();
+        return { ai: r.rating_ai, gap: r.gap };
+      }
       await wait(700);
       const past = dbRef.current.one_on_ones.filter((o) => o.rater_id === user?.id).map((o) => o.rating_human);
       const ai = scoreOneOnOne(note, past);
@@ -241,7 +251,10 @@ export function AxonProvider({ children }: { children: React.ReactNode }) {
     },
     toggleStep(key) { commit((d) => { d.done_steps = d.done_steps.includes(key) ? d.done_steps.filter((k) => k !== key) : [...d.done_steps, key]; }); },
 
-    async parseRequirements(text) { await wait(1000); return a10(dbRef.current, text); },
+    async parseRequirements(text) {
+      if (API) return postAgent<{ cards: ReqCard[]; question: string | null }>("/api/agents/requirements/parse", { text, user_id: user?.id }); // A10 on the server
+      await wait(1000); return a10(dbRef.current, text);
+    },
     submitRequirements(cards) {
       commit((d) => { for (const c of cards) d.client_requirements.unshift({ ...c, id: uid("req"), status: "submitted", submitted_by: user?.id ?? null, approved_by: null, reason: null, created_at: TODAY }); },
         { action: "submit_requirements", entity: "client_requirements", entity_id: String(cards.length) });
@@ -262,6 +275,13 @@ export function AxonProvider({ children }: { children: React.ReactNode }) {
   };
 
   return <Ctx.Provider value={store}>{children}</Ctx.Provider>;
+}
+
+/** POST to an agent route (api mode). Agent routes save their own proposals. */
+async function postAgent<T>(url: string, body: unknown): Promise<T> {
+  const r = await fetch(url, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) });
+  if (!r.ok) throw new Error(`${url} ${r.status}: ${await r.text()}`);
+  return r.json() as Promise<T>;
 }
 
 function manualFlag(d: Db, caseId: string, type: Flag["type"], detail: string, severity: Flag["severity"], owner: string, evidence_ids: string[]): Flag {

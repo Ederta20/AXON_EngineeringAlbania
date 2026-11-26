@@ -10,7 +10,7 @@ import { runRules } from "../rules";
 import { TABLES, rowKey, type TableDef } from "./tables";
 import { applyDiff, type DbChanges } from "../dbdiff";
 
-type Audit = { actor: string; action: string; entity: string; entity_id: string; payload?: Record<string, unknown> };
+type Audit = { actor: string; action: string; entity: string; entity_id: string; payload?: Record<string, unknown>; agent?: string | null; model?: string | null };
 type Row = Record<string, unknown>;
 type DoneStep = { step_key: string; case_id: string; done_at: string };
 type Loaded = Db & { _done_rows: DoneStep[] };
