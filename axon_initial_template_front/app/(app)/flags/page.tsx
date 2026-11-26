@@ -2,7 +2,7 @@
 // C2 Flags board (PMO home): every open gap by type, owner, age and cause. Entry point of the core flow.
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Flag as FlagIc, Hourglass, AlarmClock, MailQuestion, Wand2, Check, UserRoundCog } from "lucide-react";
+import { Flag as FlagIc, Hourglass, AlarmClock, MailQuestion, Wand2, Check, UserRoundCog, Sparkles } from "lucide-react";
 import { useAxon } from "@/lib/store";
 import { openFlags, employee, project } from "@/lib/selectors";
 import { daysAgo, fmtDate } from "@/lib/dates";
@@ -15,7 +15,17 @@ import { BarChart } from "@/components/charts";
 import { FLAG_ORDER } from "@/lib/rules";
 
 export default function FlagsBoard() {
-  const { db, assignOwner, confirmCause, user } = useAxon();
+  const { db, assignOwner, confirmCause, analyzeFlag, aiLive, user } = useAxon();
+  const [analyzing, setAnalyzing] = useState<string | null>(null);
+  const [aiNote, setAiNote] = useState<{ id: string; msg: string } | null>(null);
+  const askWhy = async (flagId: string) => {
+    setAnalyzing(flagId); setAiNote(null);
+    try {
+      const r = await analyzeFlag(flagId);
+      setAiNote({ id: flagId, msg: r.source === "ai" ? (r.status === "ok" ? "Updated by AI. Confirm or change it." : "AI was unsure: please classify.") : aiLive ? "AI unavailable right now." : "Demo mode: no live AI." });
+    } catch (e) { console.error(e); setAiNote({ id: flagId, msg: "AI request failed." }); }
+    finally { setAnalyzing(null); }
+  };
   const router = useRouter();
   const flags = openFlags(db);
   const [type, setType] = useState<FlagType | "all">("all");
@@ -121,6 +131,12 @@ export default function FlagsBoard() {
                                 <div className="xs muted row gap4">{f.cause_confirmed ? <><Check size={12} />Confirmed by PMO</> : "Proposed by AI"}</div></div>
                             ) : <CauseConfirm value={f.cause_class} onConfirm={(v) => confirmCause(f.id, v)} />
                           ) : <span className="xs muted">Not classified</span>}
+                          {f.root_cause && !f.cause_confirmed && <div className="xs ink2" style={{ marginTop: 4, maxWidth: 220 }}>{f.root_cause}</div>}
+                          {!readOnly && !f.cause_confirmed && (
+                            <button className="linkbtn xs row gap4" style={{ marginTop: 4 }} disabled={analyzing === f.id} onClick={() => askWhy(f.id)} title="The Root-Cause Analyst (A2) reads the evidence and proposes a cause and owner">
+                              <Sparkles size={11} />{analyzing === f.id ? "AI is thinking…" : "Ask AI why"}</button>
+                          )}
+                          {aiNote?.id === f.id && <div className="xs muted" style={{ marginTop: 2 }}>{aiNote.msg}</div>}
                         </td>
                         <td data-label="Owner"><div className="small strong">{f.owner_label}</div>{f.suggested_owner && f.suggested_owner !== f.owner_label && <div className="xs muted">AI suggests {f.suggested_owner}</div>}</td>
                         <td data-label="Age" className="num nowrap">{daysAgo(f.raised_at)}d<div className={`xs ${late ? "" : "muted"}`} style={late ? { color: "var(--sev-high)", fontWeight: 650 } : undefined}>{late ? "Overdue " : "Due "}{fmtDate(f.due_at)}</div></td>

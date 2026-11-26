@@ -1,0 +1,9 @@
+id,name,code,client_id
+p-aurora,Aurora,AUR-114,c-halden
+p-nimbus,Nimbus,NIM-482,c-halden
+p-helios,Helios,HEL-207,
+p-orion,Orion,ORI-330,c-meridian
+p-atlas,Atlas,ATL-512,
+p-nova,Nova,NOV-161,
+p-pulse,Pulse,PUL-275,c-halden
+p-vega,Vega,VEG-390,c-meridian

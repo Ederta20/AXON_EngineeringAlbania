@@ -16,6 +16,39 @@ npm run dev                  # http://localhost:3000
 
 Node 18.17 or newer. `npm run build` must pass before every push.
 
+## Setup (Gemini agents)
+
+1. `cp .env.example .env.local` and fill in `GEMINI_API_KEY` (by DM) and `CONNECTOR_SECRET`. Never commit `.env.local`.
+2. `npm install`, then `npm run dev`.
+3. Mock connector: `cp connectors/.env.example connectors/.env`, set the same `CONNECTOR_SECRET`, then `npx tsx connectors/mock/replay.ts`. It posts `seed/starter-pack.json` to `/api/ingest/evidence` with the `x-axon-secret` header.
+4. Try A3: `curl -X POST localhost:3000/api/agents/assess -H 'content-type: application/json' -d '{"case_id":"ONB-005"}'` (`"source":"ai"` means Gemini answered).
+5. With Supabase, run `supabase/migrations/20261126000100_ai_cache.sql` once so answers are cached.
+
+On Vercel, add the same variables under Project → Settings → Environment Variables. Agents whose prompt in `lib/ai/prompts.ts` still says `TODO:` return their mock answer.
+
+## Collect documents from a path
+
+Point the path collector at a folder (or one file). It finds every document in it and sends each one to A1, which matches it to a case and saves structured evidence:
+
+```bash
+npx tsx connectors/collect/collect.ts ~/exports/onboarding --dry-run   # list what it would read
+npx tsx connectors/collect/collect.ts ~/exports/onboarding             # send to A1
+npx tsx connectors/collect/collect.ts ./mail.mbox --case ONB-002       # hint the case
+```
+
+- **Emails:** `.eml` files and `.mbox` exports, with headers and the plain-text body (base64 and quoted-printable are decoded).
+- **Git repos:** the commit history (date, author, message) and the repo's Markdown docs. Code and data files are skipped.
+- **Notes and data:** `.txt`, `.md`, `.csv`, `.json`, `.log`, `.html`, `.xml`, `.yaml`. File names with "check-in", "1on1" or "tracker" set the evidence kind.
+- **Skipped:** `node_modules`, `.git`, `.env*`, files over 1 MB, and `.pdf`/`.docx`/`.xlsx`/`.pptx` (export them as text first).
+
+The collector reads files only on your machine. AXON receives the text, but A1 stores only its summaries and a `source_ref`, never the raw content. It needs the app running (`npm run dev`) and uses `connectors/.env`. It writes a `collect-report-*.json` (summaries only; git ignores it). It doesn't sign in to a live mailbox: export mail as `.eml` or `.mbox` first.
+
+## Before the demo
+
+```bash
+npx tsx connectors/warmup.ts   # pre-runs A2, A3 and A8 on the seed so their answers are cached
+```
+
 ## Demo script (core flow, about 4 minutes)
 
 | Step | Sign in as | Do this |
@@ -70,9 +103,9 @@ lib/server/            in-memory db for API routes, connector signature check
 
 ## Hooking up the backend
 
-1. Replace `lib/server/db.ts` (`getDb`/`save`) with Supabase or Prisma. The route handlers keep their request and response shapes.
-2. In each `app/api/agents/*/route.ts`, swap the mock for `callAgent(...)` (see the TODO in each file and the backend setup doc). Only `lib/ai/callAgent.ts` may import the Gemini SDK.
-3. In `lib/store.tsx`, replace each action body with a `fetch` to the route named in its comment. Components don't change.
+1. **Done:** `lib/server/db.ts` reads and writes Supabase when `NEXT_PUBLIC_SUPABASE_URL` and `SUPABASE_SECRET_KEY` are set in `.env.local` (schema and seed in `/supabase`). Without them it falls back to the in-memory seed. `save()` reruns the rules engine and writes back only the changed rows; `lib/server/tables.ts` maps each table.
+2. **Ready for the agents:** A1, A2, A3, A4, A6 and A10 already go through `callAgent()` (`lib/ai/callAgent.ts`) with a zod output schema and a mock fallback, and save their proposals. `generate()` calls Gemini; A3 has its prompt. To make another agent real, write its prompt in `lib/ai/prompts.ts`. See `/spec/agents/README.md`. Only `lib/ai/callAgent.ts` may call the model.
+3. **Done:** with `NEXT_PUBLIC_DATA_SOURCE=api`, `lib/store.tsx` loads everything from `GET /api/db` and, after each action, sends only the changed rows to `PUT /api/db` (`lib/dbdiff.ts`). The server writes them to Supabase, reruns the rules and returns the new state. **Reset demo** reloads from the database instead of the seed. Demo shortcut: `PUT /api/db` accepts any row; move to the per-action routes with role checks before real users.
 4. Connectors (`/connectors`, separate process) talk only to `/api/ingest/*` and `/api/outbox`, signed with `CONNECTOR_SECRET`. AXON never reads mail or chat.
 
 ### API contract

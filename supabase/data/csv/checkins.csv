@@ -1,0 +1,16 @@
+id,case_id,scope_id,self_score,kt_rating,doc_rating,note,at
+ci-005-1,ONB-005,,9,4,4,Comfortable on standard work.,2026-10-12
+ci-010-1,ONB-010,,7,4,3,Need help on exceptions and production changes.,2026-10-14
+ci-001-1,ONB-001,,4,4,3,Still shadowing.,2026-10-12
+ci-002-1,ONB-002,,3,,,Cannot start without Orion Portal and Helix.,2026-10-13
+ci-009-1,ONB-009,,5,3,2,Not sure which project I am on.,2026-10-10
+ci-008-1,ONB-008,,5,3,3,,2026-10-11
+ci-011-1,ONB-011,,9,5,4,Feedback submitted at close.,2026-09-27
+ci-012-1,ONB-012,,8,4,3,Outage runbook is hard to follow.,2026-10-10
+ci-014-1,ONB-014,,8,3,2,All good.,2026-10-12
+ci-015-1,ONB-015,,6,4,4,Did not know about the PCI training until this week.,2026-10-13
+ci-017-1,ONB-017,s-017-1,6,4,4,Tickets are fine with a reviewer.,2026-10-13
+ci-017-2,ONB-017,s-017-2,3,3,1,No document for the knowledge base process.,2026-10-13
+ci-018-1,ONB-018,,6,4,4,NOC access works now.,2026-10-13
+ci-019-1,ONB-019,,3,2,3,I mostly watch. Not sure when I can take tickets alone.,2026-10-09
+ci-020-1,ONB-020,,4,4,3,Waiting for the test environment.,2026-10-13

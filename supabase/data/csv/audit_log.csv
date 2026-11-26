@@ -1,0 +1,89 @@
+id,actor,actor_id,action,entity,entity_id,payload,agent,model,at
+au-0007,A1 Evidence Extractor,,extract_evidence,evidence,ev-update-7,"{""source_ref"":""tracker://onboarding.xlsx/row/ONB-007"",""status"":""ok""}",A1 Evidence Extractor,mock-cache,2026-09-20T09:00:00Z
+au-0042,A3 Readiness Assessor,,propose_level,validations,va-011-1,"{""proposed_level"":""independent"",""confidence"":0.9}",A3 Readiness Assessor,mock-cache,2026-09-21T09:00:00Z
+au-0043,Rhea Vance (Tech Lead),u-tl-vega,decide_validation,validations,va-011-1,"{""decided_level"":""validated"",""reason"":""Observed alone for a week.""}",,,2026-09-22T09:00:00Z
+au-0044,A3 Readiness Assessor,,propose_level,validations,va-011-2,"{""proposed_level"":""independent"",""confidence"":0.84}",A3 Readiness Assessor,mock-cache,2026-09-23T09:00:00Z
+au-0074,A6 1:1 Scorer,,score_1on1,one_on_ones,oo-011-1,"{""rating_human"":9,""rating_ai"":9}",A6 1:1 Scorer,mock-cache,2026-09-23T09:00:00Z
+au-0045,Rhea Vance (Tech Lead),u-tl-vega,decide_validation,validations,va-011-2,"{""decided_level"":""validated"",""reason"":""Correct escalation seen.""}",,,2026-09-24T09:00:00Z
+au-0046,A3 Readiness Assessor,,propose_level,validations,va-011-3,"{""proposed_level"":""independent"",""confidence"":0.82}",A3 Readiness Assessor,mock-cache,2026-09-24T09:00:00Z
+au-0009,A1 Evidence Extractor,,extract_evidence,evidence,ev-tl-011,"{""source_ref"":""teams://vega-kt/review/ONB-011"",""status"":""ok""}",A1 Evidence Extractor,mock-cache,2026-09-25T09:00:00Z
+au-0047,Rhea Vance (Tech Lead),u-tl-vega,decide_validation,validations,va-011-3,"{""decided_level"":""validated"",""reason"":""Changes reviewed after the fact, no issues.""}",,,2026-09-25T09:00:00Z
+au-0024,A2 Root-Cause Analyst,,analyze_flag,flags,fl-access_delay-ONB-007,"{""cause_class"":""external"",""suggested_owner"":""Nova network team""}",A2 Root-Cause Analyst,mock-cache,2026-09-26T09:00:00Z
+au-0075,A6 1:1 Scorer,,score_1on1,one_on_ones,oo-011-2,"{""rating_human"":8,""rating_ai"":8}",A6 1:1 Scorer,mock-cache,2026-09-26T09:00:00Z
+au-0019,A2 Root-Cause Analyst,,analyze_flag,flags,fl-missing_info-ONB-003,"{""cause_class"":""process"",""suggested_owner"":""Hana Brooks (HR)""}",A2 Root-Cause Analyst,mock-cache,2026-09-28T09:00:00Z
+au-0027,A2 Root-Cause Analyst,,analyze_flag,flags,fl-missing_info-ONB-010,"{""cause_class"":""process"",""suggested_owner"":""Rhea Vance (TL)""}",A2 Root-Cause Analyst,mock-cache,2026-09-29T09:00:00Z
+au-0020,A2 Root-Cause Analyst,,analyze_flag,flags,fl-missing_info-ONB-004,"{""cause_class"":""compliance"",""suggested_owner"":""Hana Brooks (HR)""}",A2 Root-Cause Analyst,mock-cache,2026-10-01T09:00:00Z
+au-0023,A2 Root-Cause Analyst,,analyze_flag,flags,fl-stale-ONB-007,"{""cause_class"":""compliance"",""suggested_owner"":""Rita Cole (LM)""}",A2 Root-Cause Analyst,mock-cache,2026-10-01T09:00:00Z
+au-0016,A2 Root-Cause Analyst,,analyze_flag,flags,fl-missing_info-ONB-001,"{""cause_class"":""compliance"",""suggested_owner"":""Jon Vale (LM)""}",A2 Root-Cause Analyst,mock-cache,2026-10-05T09:00:00Z
+au-0029,A2 Root-Cause Analyst,,analyze_flag,flags,fl-access_delay-ONB-018,"{""cause_class"":""external"",""suggested_owner"":""Nova network team""}",A2 Root-Cause Analyst,mock-cache,2026-10-05T09:00:00Z
+au-0026,A2 Root-Cause Analyst,,analyze_flag,flags,fl-missing_info-ONB-009,"{""cause_class"":""process"",""suggested_owner"":""Dario Wells (TM)""}",A2 Root-Cause Analyst,mock-cache,2026-10-06T09:00:00Z
+au-0076,A6 1:1 Scorer,,score_1on1,one_on_ones,oo-012-1,"{""rating_human"":8,""rating_ai"":7}",A6 1:1 Scorer,mock-cache,2026-10-06T09:00:00Z
+au-0085,A10 Requirements Assistant,,parse_requirement,client_requirements,req-004,"{""type"":""compliance""}",A10 Requirements Assistant,mock-cache,2026-10-06T09:00:00Z
+au-0001,A1 Evidence Extractor,,extract_evidence,evidence,ev-email-1,"{""source_ref"":""outlook://NIM-482/thread/access-request#msg-1"",""status"":""ok""}",A1 Evidence Extractor,mock-cache,2026-10-07T09:00:00Z
+au-0048,A3 Readiness Assessor,,propose_level,validations,va-012-1,"{""proposed_level"":""independent"",""confidence"":0.9}",A3 Readiness Assessor,mock-cache,2026-10-07T09:00:00Z
+au-0050,A3 Readiness Assessor,,propose_level,validations,va-012-2,"{""proposed_level"":""independent"",""confidence"":0.82}",A3 Readiness Assessor,mock-cache,2026-10-07T09:00:00Z
+au-0086,Tess Albright (Platform Admin),u-admin,reject_requirement,client_requirements,req-004,"{""reason"":""HR already tracks background checks outside onboarding.""}",,,2026-10-07T09:00:00Z
+au-0005,A1 Evidence Extractor,,extract_evidence,evidence,ev-email-5,"{""source_ref"":""outlook://ONB-009/thread/role-confirmation#msg-1"",""status"":""ok""}",A1 Evidence Extractor,mock-cache,2026-10-08T09:00:00Z
+au-0049,Ada Quinn (Tech Lead),u-tl-orion,decide_validation,validations,va-012-1,"{""decided_level"":""validated"",""reason"":""Matches what I saw.""}",,,2026-10-08T09:00:00Z
+au-0051,Ada Quinn (Tech Lead),u-tl-orion,decide_validation,validations,va-012-2,"{""decided_level"":""validated"",""reason"":""Matches what I saw.""}",,,2026-10-08T09:00:00Z
+au-0052,A3 Readiness Assessor,,propose_level,validations,va-012-3,"{""proposed_level"":""independent"",""confidence"":0.58}",A3 Readiness Assessor,mock-cache,2026-10-08T09:00:00Z
+au-0059,A4 Next-Action Drafter,,draft_action,actions,act-009-1,"{""flag_id"":""fl-unanswered-ONB-009"",""channel"":""outlook""}",A4 Next-Action Drafter,mock-cache,2026-10-08T09:00:00Z
+au-0060,Sam Ortiz (PMO Coordinator),u-pmo,approve_action,actions,act-009-1,,,,2026-10-08T09:00:00Z
+au-0072,A6 1:1 Scorer,,score_1on1,one_on_ones,oo-010-1,"{""rating_human"":6,""rating_ai"":7}",A6 1:1 Scorer,mock-cache,2026-10-08T09:00:00Z
+au-0079,A6 1:1 Scorer,,score_1on1,one_on_ones,oo-019-1,"{""rating_human"":4,""rating_ai"":3}",A6 1:1 Scorer,mock-cache,2026-10-08T09:00:00Z
+au-0010,A1 Evidence Extractor,,extract_evidence,evidence,ev-tl-012,"{""source_ref"":""outlook://ORI-330/thread/kt-weekly#2026-10-09"",""status"":""ok""}",A1 Evidence Extractor,mock-cache,2026-10-09T09:00:00Z
+au-0053,Ada Quinn (Tech Lead),u-tl-orion,decide_validation,validations,va-012-3,"{""decided_level"":""supported"",""reason"":""I guided steps 3-6, so he is not yet independent on outages.""}",,,2026-10-09T09:00:00Z
+au-0061,A4 Next-Action Drafter,,draft_action,actions,act-018-1,"{""flag_id"":""fl-access_delay-ONB-018"",""channel"":""outlook""}",A4 Next-Action Drafter,mock-cache,2026-10-09T09:00:00Z
+au-0062,Sam Ortiz (PMO Coordinator),u-pmo,approve_action,actions,act-018-1,,,,2026-10-09T09:00:00Z
+au-0064,A4 Next-Action Drafter,,draft_action,actions,act-018-2,"{""flag_id"":""fl-access_delay-ONB-018"",""channel"":""teams""}",A4 Next-Action Drafter,mock-cache,2026-10-09T09:00:00Z
+au-0065,Sam Ortiz (PMO Coordinator),u-pmo,reject_action,actions,act-018-2,"{""reason"":""The employee should not chase access; it goes to the access owner.""}",,,2026-10-09T09:00:00Z
+au-0070,A6 1:1 Scorer,,score_1on1,one_on_ones,oo-005-1,"{""rating_human"":8,""rating_ai"":8}",A6 1:1 Scorer,mock-cache,2026-10-09T09:00:00Z
+au-0073,A6 1:1 Scorer,,score_1on1,one_on_ones,oo-004-1,"{""rating_human"":6,""rating_ai"":6}",A6 1:1 Scorer,mock-cache,2026-10-09T09:00:00Z
+au-0080,A10 Requirements Assistant,,parse_requirement,client_requirements,req-001,"{""type"":""skill""}",A10 Requirements Assistant,mock-cache,2026-10-09T09:00:00Z
+au-0082,A10 Requirements Assistant,,parse_requirement,client_requirements,req-002,"{""type"":""access""}",A10 Requirements Assistant,mock-cache,2026-10-09T09:00:00Z
+au-0011,A1 Evidence Extractor,,extract_evidence,evidence,ev-lm-012,"{""source_ref"":""outlook://ORI-330/thread/lm-progress#2026-10-10"",""status"":""ok""}",A1 Evidence Extractor,mock-cache,2026-10-10T09:00:00Z
+au-0071,A6 1:1 Scorer,,score_1on1,one_on_ones,oo-008-1,"{""rating_human"":5,""rating_ai"":6}",A6 1:1 Scorer,mock-cache,2026-10-10T09:00:00Z
+au-0078,A6 1:1 Scorer,,score_1on1,one_on_ones,oo-015-1,"{""rating_human"":6,""rating_ai"":6}",A6 1:1 Scorer,mock-cache,2026-10-10T09:00:00Z
+au-0081,Tess Albright (Platform Admin),u-admin,approve_requirement,client_requirements,req-001,"{""reason"":""Contractual for Meridian from November.""}",,,2026-10-10T09:00:00Z
+au-0083,Tess Albright (Platform Admin),u-admin,approve_requirement,client_requirements,req-002,"{""reason"":""Needed for the PCI scope.""}",,,2026-10-10T09:00:00Z
+au-0008,A1 Evidence Extractor,,extract_evidence,evidence,ev-email-8,"{""source_ref"":""outlook://ATL-512/thread/docs-location#msg-1"",""status"":""ok""}",A1 Evidence Extractor,mock-cache,2026-10-11T09:00:00Z
+au-0018,A2 Root-Cause Analyst,,analyze_flag,flags,fl-stale-ONB-003,"{""cause_class"":""process"",""suggested_owner"":""Tomas Reed (LM)""}",A2 Root-Cause Analyst,mock-cache,2026-10-11T09:00:00Z
+au-0028,A2 Root-Cause Analyst,,analyze_flag,flags,fl-unanswered-ONB-009,"{""cause_class"":""process"",""suggested_owner"":""Dario Wells (TM)""}",A2 Root-Cause Analyst,mock-cache,2026-10-11T09:00:00Z
+au-0015,A1 Evidence Extractor,,extract_evidence,evidence,ev-email-018-1,"{""source_ref"":""outlook://NOV-161/thread/noc-access-ruben#msg-2"",""status"":""ok""}",A1 Evidence Extractor,mock-cache,2026-10-12T09:00:00Z
+au-0022,A2 Root-Cause Analyst,,analyze_flag,flags,fl-date_mismatch-ONB-006,"{""cause_class"":""process"",""suggested_owner"":""Hana Brooks (HR)""}",A2 Root-Cause Analyst,mock-cache,2026-10-12T09:00:00Z
+au-0063,A5 Reply Listener,,match_reply,actions,act-018-1,"{""reply_summary"":""Access granted on 12 Oct.""}",A5 Reply Listener,mock-cache,2026-10-12T09:00:00Z
+au-0003,A1 Evidence Extractor,,extract_evidence,evidence,ev-email-3,"{""source_ref"":""outlook://ORI-330/thread/kt-weekly#2026-10-13"",""status"":""ok""}",A1 Evidence Extractor,mock-cache,2026-10-13T09:00:00Z
+au-0004,A1 Evidence Extractor,,extract_evidence,evidence,ev-email-4,"{""source_ref"":""outlook://ORI-330/thread/lm-progress#2026-10-13"",""status"":""ok""}",A1 Evidence Extractor,mock-cache,2026-10-13T09:00:00Z
+au-0012,A1 Evidence Extractor,,extract_evidence,evidence,ev-ai-013-1,"{""source_ref"":""teams://axon-bot/dm/2026-10-13T09:12"",""status"":""needs_review""}",A1 Evidence Extractor,mock-cache,2026-10-13T09:00:00Z
+au-0013,A1 Evidence Extractor,,extract_evidence,evidence,ev-hr-016,"{""source_ref"":""outlook://ATL-512/thread/new-start-jonah#msg-1"",""status"":""ok""}",A1 Evidence Extractor,mock-cache,2026-10-13T09:00:00Z
+au-0017,A2 Root-Cause Analyst,,analyze_flag,flags,fl-access_delay-ONB-002,"{""cause_class"":""external"",""suggested_owner"":""Access Support""}",A2 Root-Cause Analyst,mock-cache,2026-10-13T09:00:00Z
+au-0021,A2 Root-Cause Analyst,,analyze_flag,flags,fl-conflict-ONB-005,"{""cause_class"":""process"",""suggested_owner"":""Ada Quinn (TL)""}",A2 Root-Cause Analyst,mock-cache,2026-10-13T09:00:00Z
+au-0030,A2 Root-Cause Analyst,,analyze_flag,flags,fl-rating_gap-ONB-014,"{""cause_class"":""individual"",""suggested_owner"":""Ivo Sand (TL)""}",A2 Root-Cause Analyst,mock-cache,2026-10-13T09:00:00Z
+au-0031,A2 Root-Cause Analyst,,analyze_flag,flags,fl-blocked-ONB-020,"{""cause_class"":""external"",""suggested_owner"":""Nimbus platform team""}",A2 Root-Cause Analyst,mock-cache,2026-10-13T09:00:00Z
+au-0033,A3 Readiness Assessor,,propose_level,validations,va-005-1,"{""proposed_level"":""independent"",""confidence"":0.88}",A3 Readiness Assessor,mock-cache,2026-10-13T09:00:00Z
+au-0034,A3 Readiness Assessor,,propose_level,validations,va-005-2,"{""proposed_level"":""independent"",""confidence"":0.76}",A3 Readiness Assessor,mock-cache,2026-10-13T09:00:00Z
+au-0035,A3 Readiness Assessor,,propose_level,validations,va-005-3,"{""proposed_level"":""supported"",""confidence"":0.71}",A3 Readiness Assessor,mock-cache,2026-10-13T09:00:00Z
+au-0036,A3 Readiness Assessor,,propose_level,validations,va-005-4,"{""proposed_level"":""shadowing"",""confidence"":0.64}",A3 Readiness Assessor,mock-cache,2026-10-13T09:00:00Z
+au-0037,A3 Readiness Assessor,,propose_level,validations,va-005-5,"{""proposed_level"":""independent"",""confidence"":0.8}",A3 Readiness Assessor,mock-cache,2026-10-13T09:00:00Z
+au-0038,A3 Readiness Assessor,,propose_level,validations,va-010-1,"{""proposed_level"":""independent"",""confidence"":0.74}",A3 Readiness Assessor,mock-cache,2026-10-13T09:00:00Z
+au-0039,A3 Readiness Assessor,,propose_level,validations,va-010-2,"{""proposed_level"":""supported"",""confidence"":0.7}",A3 Readiness Assessor,mock-cache,2026-10-13T09:00:00Z
+au-0040,A3 Readiness Assessor,,propose_level,validations,va-010-3,"{""proposed_level"":""supported"",""confidence"":0.69}",A3 Readiness Assessor,mock-cache,2026-10-13T09:00:00Z
+au-0041,A3 Readiness Assessor,,propose_level,validations,va-008-1,"{""proposed_level"":""supported"",""confidence"":0.62}",A3 Readiness Assessor,mock-cache,2026-10-13T09:00:00Z
+au-0054,A3 Readiness Assessor,,propose_level,validations,va-014-1,"{""proposed_level"":""supported"",""confidence"":0.66}",A3 Readiness Assessor,mock-cache,2026-10-13T09:00:00Z
+au-0055,A3 Readiness Assessor,,propose_level,validations,va-015-1,"{""proposed_level"":""supported"",""confidence"":0.7}",A3 Readiness Assessor,mock-cache,2026-10-13T09:00:00Z
+au-0056,A3 Readiness Assessor,,propose_level,validations,va-017-1,"{""proposed_level"":""supported"",""confidence"":0.68}",A3 Readiness Assessor,mock-cache,2026-10-13T09:00:00Z
+au-0057,A3 Readiness Assessor,,propose_level,validations,va-017-2,"{""proposed_level"":""shadowing"",""confidence"":0.72}",A3 Readiness Assessor,mock-cache,2026-10-13T09:00:00Z
+au-0058,A3 Readiness Assessor,,propose_level,validations,va-018-1,"{""proposed_level"":""supported"",""confidence"":0.67}",A3 Readiness Assessor,mock-cache,2026-10-13T09:00:00Z
+au-0077,A6 1:1 Scorer,,score_1on1,one_on_ones,oo-014-1,"{""rating_human"":8,""rating_ai"":4}",A6 1:1 Scorer,mock-cache,2026-10-13T09:00:00Z
+au-0084,A10 Requirements Assistant,,parse_requirement,client_requirements,req-003,"{""type"":""deadline""}",A10 Requirements Assistant,mock-cache,2026-10-13T09:00:00Z
+au-0087,Sam Ortiz (PMO Coordinator),u-pmo,resolve_flag,flags,fl-missing_info-ONB-017,"{""reason"":""No written process; tracked as a path suggestion.""}",,,2026-10-13T09:00:00Z
+au-0002,A1 Evidence Extractor,,extract_evidence,evidence,ev-email-2,"{""source_ref"":""outlook://NIM-482/thread/access-request#msg-2"",""status"":""ok""}",A1 Evidence Extractor,mock-cache,2026-10-14T09:00:00Z
+au-0006,A1 Evidence Extractor,,extract_evidence,evidence,ev-update-6,"{""source_ref"":""teams://axon-bot/checkin/ONB-010/2026-10-14"",""status"":""ok""}",A1 Evidence Extractor,mock-cache,2026-10-14T09:00:00Z
+au-0014,A1 Evidence Extractor,,extract_evidence,evidence,ev-ai-017-1,"{""source_ref"":""outlook://AUR-114/thread/kt-weekly#2026-10-14"",""status"":""needs_review""}",A1 Evidence Extractor,mock-cache,2026-10-14T09:00:00Z
+au-0025,A2 Root-Cause Analyst,,analyze_flag,flags,fl-missing_info-ONB-008,"{""cause_class"":""individual"",""suggested_owner"":""Mark Hale (LM)""}",A2 Root-Cause Analyst,mock-cache,2026-10-14T09:00:00Z
+au-0032,A2 Root-Cause Analyst,,analyze_flag,flags,fl-at_risk-ONB-019,"{""cause_class"":""individual"",""suggested_owner"":""Jon Vale (LM)""}",A2 Root-Cause Analyst,mock-cache,2026-10-14T09:00:00Z
+au-0066,A4 Next-Action Drafter,,draft_action,actions,act-019-1,"{""flag_id"":""fl-at_risk-ONB-019"",""channel"":""teams""}",A4 Next-Action Drafter,mock-cache,2026-10-14T09:00:00Z
+au-0067,Sam Ortiz (PMO Coordinator),u-pmo,approve_action,actions,act-019-1,,,,2026-10-14T09:00:00Z
+au-0068,A4 Next-Action Drafter,,draft_action,actions,act-020-1,"{""flag_id"":""fl-blocked-ONB-020"",""channel"":""outlook""}",A4 Next-Action Drafter,mock-cache,2026-10-14T09:00:00Z
+au-0069,A4 Next-Action Drafter,,draft_action,actions,act-014-1,"{""flag_id"":""fl-rating_gap-ONB-014"",""channel"":""teams""}",A4 Next-Action Drafter,mock-cache,2026-10-14T09:00:00Z
+au-0088,Sam Ortiz (PMO Coordinator),u-pmo,confirm_cause,flags,fl-blocked-ONB-020,"{""cause"":""external""}",,,2026-10-14T09:00:00Z

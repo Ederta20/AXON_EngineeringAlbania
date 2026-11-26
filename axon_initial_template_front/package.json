@@ -11,6 +11,8 @@
   "dependencies": {
     "@fontsource-variable/jetbrains-mono": "^5.1.0",
     "@fontsource-variable/plus-jakarta-sans": "^5.1.0",
+    "@google/genai": "^3.6.1",
+    "@supabase/supabase-js": "^2.119.2",
     "apexcharts": "^3.54.0",
     "lucide-react": "^0.460.0",
     "next": "^14.2.35",
@@ -23,6 +25,7 @@
     "@types/node": "^20.11.0",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
+    "tsx": "^4.23.15",
     "typescript": "^5.4.5"
   }
 }

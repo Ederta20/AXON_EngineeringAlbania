@@ -1,0 +1,8 @@
+key,value,description
+app_today,"""2026-10-14""",Fixed app clock for the demo. Delete the row to use the real date.
+stale_days,10,rule_stale: days without an update before a case is stale.
+escalate_days,5,rule_access_delay / rule_unanswered: days before escalation.
+tl_cap,84,Score cap until the TL validates every core scope.
+provisional_below,60,Completeness % below which a score is provisional.
+rating_gap,2,A6: human vs AI 1:1 rating difference that raises a flag.
+bands,"{""not_ready"":0,""partially_ready"":40,""ready_with_support"":65,""ready"":85}",Lower bound of each readiness band.

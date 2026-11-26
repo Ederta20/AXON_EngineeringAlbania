@@ -7,6 +7,10 @@ import { makeSeed, TODAY } from "./seed";
 import { runRules } from "./rules";
 import { draftAction as a4, parseRequirement as a10, REPLIES, replyEvidence, scoreOneOnOne } from "./agents";
 import { addDays } from "./dates";
+import { diffDb, isEmpty } from "./dbdiff";
+
+// "api": load from and save to Supabase through /api/db. "mock" (default): everything stays in this browser.
+const API = process.env.NEXT_PUBLIC_DATA_SOURCE === "api";
 
 const KEY = "axon-demo-v3";
 const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
@@ -14,11 +18,14 @@ let seq = 0;
 const uid = (p: string) => `${p}-${Date.now().toString(36)}${(seq++).toString(36)}`;
 
 type ReqCard = ReturnType<typeof a10>["cards"][number];
+/** What an agent button needs to tell the person: did the real model answer, and does a human need to check it. */
+export type AgentRun = { source: "ai" | "mock"; status: "ok" | "needs_review"; count?: number; conflicts?: string[] };
 
 interface Store {
   db: Db;
   user: User | null;
   ready: boolean;
+  aiLive: boolean;                                             // true in api mode: agent buttons call the real model
   login(userId: string): void;
   logout(): void;
   reset(): void;
@@ -30,6 +37,11 @@ interface Store {
   simulateReply(actionId: string): void;                       // POST /api/ingest/replies (mock connector)
   assignOwner(flagIds: string[], ownerLabel: string): void;     // PATCH /api/flags/:id
   confirmCause(flagId: string, cause: CauseClass): void;       // PATCH /api/flags/:id
+  analyzeFlag(flagId: string): Promise<AgentRun>;              // POST /api/agents/analyze-flag (A2)
+  assessReadiness(caseId: string): Promise<AgentRun>;          // POST /api/agents/assess (A3)
+  generateChallenges(skillId: string): Promise<AgentRun>;      // POST /api/agents/challenges (A7)
+  improvePath(pathId: string): Promise<AgentRun>;              // POST /api/agents/improve (A9)
+  writeReport(audience: "management" | "digest"): Promise<{ source: "ai" | "mock"; subject: string; text: string }>; // POST /api/agents/report (A8)
   resolveFlag(flagId: string, reason: string): void;           // PATCH /api/flags/:id {status: resolved}
   decideValidation(id: string, level: ScopeLevel, reason: string | null): void; // POST /api/validations/:id/decide
   setOutcome(caseId: string, outcome: Outcome, reason: string): void;          // POST /api/cases/:id/outcome
@@ -61,39 +73,76 @@ export function AxonProvider({ children }: { children: React.ReactNode }) {
   const dbRef = useRef(db);
   dbRef.current = db;
 
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem(KEY);
-      if (raw) { const s = JSON.parse(raw); if (s.db) setDb(s.db); if (s.userId) setUserId(s.userId); }
-    } catch { /* storage can be unavailable */ }
-    setReady(true);
+  const pending = useRef(0);
+  const queue = useRef<Promise<void>>(Promise.resolve());
+
+  const loadFromServer = useCallback(async () => {
+    const r = await fetch("/api/db", { cache: "no-store" });
+    if (!r.ok) throw new Error(`GET /api/db ${r.status}`);
+    const d = (await r.json()) as Db;
+    dbRef.current = d;
+    setDb(d);
   }, []);
 
   useEffect(() => {
+    try {
+      const raw = localStorage.getItem(KEY);
+      if (raw) { const s = JSON.parse(raw); if (!API && s.db) setDb(s.db); if (s.userId) setUserId(s.userId); }
+    } catch { /* storage can be unavailable */ }
+    if (!API) { setReady(true); return; }
+    loadFromServer().catch((e) => console.error("AXON: could not load from the database", e)).finally(() => setReady(true));
+  }, [loadFromServer]);
+
+  useEffect(() => {
     if (!ready) return;
-    try { localStorage.setItem(KEY, JSON.stringify({ db, userId })); } catch { /* ignore */ }
+    try { localStorage.setItem(KEY, JSON.stringify(API ? { userId } : { db, userId })); } catch { /* ignore */ }
   }, [db, userId, ready]);
+
+  /** api mode: send only the rows an action changed; the server writes them, reruns the rules and returns the new state. */
+  const sync = useCallback((prev: Db, next: Db) => {
+    const changes = diffDb(prev, next);
+    if (isEmpty(changes)) return;
+    pending.current++;
+    queue.current = queue.current.then(async () => {
+      try {
+        const r = await fetch("/api/db", { method: "PUT", headers: { "content-type": "application/json" }, body: JSON.stringify(changes) });
+        if (!r.ok) throw new Error(await r.text());
+        const server = (await r.json()) as Db;
+        if (--pending.current === 0) { dbRef.current = server; setDb(server); } // a newer local change is still on its way
+      } catch (e) {
+        pending.current--;
+        console.error("AXON: could not save to the database", e);
+        if (typeof window !== "undefined") window.alert("Could not save this change to the database. Check the terminal running npm run dev.");
+      }
+    });
+  }, []);
 
   const user = useMemo(() => db.users.find((u) => u.id === userId) ?? null, [db.users, userId]);
   const actor = user ? `${user.name} (${user.title})` : "system";
 
   const commit = useCallback((fn: (d: Db) => void, audit?: { action: string; entity: string; entity_id: string; payload?: Record<string, unknown>; actor?: string }) => {
-    setDb((prev) => {
-      const d = structuredClone(prev);
-      fn(d);
-      runRules(d);
-      if (audit) d.audit_log.unshift({ id: uid("au"), actor: audit.actor ?? actor, at: new Date().toISOString(), ...audit });
-      return d;
-    });
-  }, [actor]);
+    const prev = dbRef.current;
+    const d = structuredClone(prev);
+    fn(d);
+    runRules(d);
+    if (audit) d.audit_log.unshift({ id: uid("au"), actor: audit.actor ?? actor, at: new Date().toISOString(), ...audit });
+    dbRef.current = d; // so back-to-back actions build on each other
+    setDb(d);
+    if (API) sync(prev, d);
+  }, [actor, sync]);
 
   const store: Store = {
-    db, user, ready,
+    db, user, ready, aiLive: API,
     login: (id) => setUserId(id),
     logout: () => setUserId(null),
-    reset: () => { setDb(fresh()); },
+    reset: () => { if (API) loadFromServer().catch((e) => console.error(e)); else setDb(fresh()); }, // api mode: reload from the database
 
     async draftNextAction(flagId) {
+      if (API) { // A4 runs on the server (real model when configured) and saves the draft
+        const a = await postAgent<{ id: string }>("/api/agents/draft-action", { flag_id: flagId });
+        await loadFromServer();
+        return a.id;
+      }
       await wait(900); // model latency, so the "drafting" state is visible
       const flag = dbRef.current.flags.find((f) => f.id === flagId)!;
       const draft = a4(dbRef.current, flag);
@@ -115,6 +164,10 @@ export function AxonProvider({ children }: { children: React.ReactNode }) {
       commit((d) => { const a = d.actions.find((x) => x.id === id)!; a.status = "rejected"; a.reject_reason = reason; }, { action: "reject_action", entity: "actions", entity_id: id, payload: { reason } });
     },
     simulateReply(actionId) {
+      if (API) { // A5 on the server: answered, A1 turns the reply into evidence, the pipeline follows
+        postAgent("/api/agents/reply", { action_id: actionId }).then(() => loadFromServer()).catch((e) => console.error("AXON: reply failed", e));
+        return;
+      }
       commit((d) => {
         const a = d.actions.find((x) => x.id === actionId)!;
         const c = d.cases.find((x) => x.id === a.case_id)!;
@@ -158,7 +211,56 @@ export function AxonProvider({ children }: { children: React.ReactNode }) {
       }, { action: "set_outcome", entity: "cases", entity_id: caseId, payload: { outcome, reason } });
     },
 
+    async analyzeFlag(flagId) {
+      if (API) { // A2 proposes cause, owner and a sentence on the server; the PMO still confirms
+        const r = await postAgent<AgentRun>("/api/agents/analyze-flag", { flag_id: flagId });
+        await loadFromServer();
+        return r;
+      }
+      await wait(700); // mock mode: the seeded proposal is already shown
+      return { source: "mock", status: "ok" };
+    },
+
+    async assessReadiness(caseId) {
+      if (API) { // A3 proposes a level per scope on the server; only the TL decides
+        const r = await postAgent<{ source: "ai" | "mock"; status: "ok" | "needs_review"; scopes: unknown[]; conflicts: string[] }>("/api/agents/assess", { case_id: caseId });
+        await loadFromServer();
+        return { source: r.source, status: r.status, count: r.scopes.length, conflicts: r.conflicts };
+      }
+      await wait(900); // mock mode: the seeded proposals are already shown
+      return { source: "mock", status: "ok" };
+    },
+
+    async generateChallenges(skillId) {
+      if (API) { // A7 drafts 2-3 challenges; the TL approves them before anyone sees them
+        const r = await postAgent<{ source: "ai" | "mock"; status: "ok" | "needs_review"; challenges: unknown[] }>("/api/agents/challenges", { skill_id: skillId });
+        await loadFromServer();
+        return { source: r.source, status: r.status, count: r.challenges.length };
+      }
+      await wait(700); return { source: "mock", status: "ok" };
+    },
+
+    async improvePath(pathId) {
+      if (API) { // A9: benchmark from completed cases (in code) + template changes from confirmed causes; the PMO approves
+        const r = await postAgent<{ source: "ai" | "mock"; status: "ok" | "needs_review"; suggestions: { status: string }[] }>("/api/agents/improve", { path_id: pathId });
+        await loadFromServer();
+        return { source: r.source, status: r.status, count: r.suggestions.filter((x) => x.status === "proposed").length };
+      }
+      await wait(700); return { source: "mock", status: "ok" };
+    },
+
+    async writeReport(audience) {
+      if (API) return postAgent<{ source: "ai" | "mock"; subject: string; text: string }>("/api/agents/report", { audience, user_id: user?.id }); // A8: numbers from code, words from the model
+      await wait(700);
+      return { source: "mock", subject: "AXON report (demo mode)", text: "Live reports need NEXT_PUBLIC_DATA_SOURCE=api. The numbers on this page are the same ones the report would use." };
+    },
+
     async submitOneOnOne(caseId, rating, note) {
+      if (API) { // A6 scores the note on the server and saves the 1:1 (and a rating_gap flag if needed)
+        const r = await postAgent<{ rating_ai: number; gap: boolean }>("/api/agents/score-1on1", { case_id: caseId, rater_id: user?.id ?? "u-pmo", rating_human: rating, note });
+        await loadFromServer();
+        return { ai: r.rating_ai, gap: r.gap };
+      }
       await wait(700);
       const past = dbRef.current.one_on_ones.filter((o) => o.rater_id === user?.id).map((o) => o.rating_human);
       const ai = scoreOneOnOne(note, past);
@@ -205,7 +307,10 @@ export function AxonProvider({ children }: { children: React.ReactNode }) {
     },
     toggleStep(key) { commit((d) => { d.done_steps = d.done_steps.includes(key) ? d.done_steps.filter((k) => k !== key) : [...d.done_steps, key]; }); },
 
-    async parseRequirements(text) { await wait(1000); return a10(dbRef.current, text); },
+    async parseRequirements(text) {
+      if (API) return postAgent<{ cards: ReqCard[]; question: string | null }>("/api/agents/requirements/parse", { text, user_id: user?.id }); // A10 on the server
+      await wait(1000); return a10(dbRef.current, text);
+    },
     submitRequirements(cards) {
       commit((d) => { for (const c of cards) d.client_requirements.unshift({ ...c, id: uid("req"), status: "submitted", submitted_by: user?.id ?? null, approved_by: null, reason: null, created_at: TODAY }); },
         { action: "submit_requirements", entity: "client_requirements", entity_id: String(cards.length) });
@@ -226,6 +331,13 @@ export function AxonProvider({ children }: { children: React.ReactNode }) {
   };
 
   return <Ctx.Provider value={store}>{children}</Ctx.Provider>;
+}
+
+/** POST to an agent route (api mode). Agent routes save their own proposals. */
+async function postAgent<T>(url: string, body: unknown): Promise<T> {
+  const r = await fetch(url, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) });
+  if (!r.ok) throw new Error(`${url} ${r.status}: ${await r.text()}`);
+  return r.json() as Promise<T>;
 }
 
 function manualFlag(d: Db, caseId: string, type: Flag["type"], detail: string, severity: Flag["severity"], owner: string, evidence_ids: string[]): Flag {

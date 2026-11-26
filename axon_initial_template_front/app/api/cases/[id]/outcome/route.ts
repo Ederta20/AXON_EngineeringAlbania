@@ -7,8 +7,8 @@ import { TODAY } from "@/lib/seed";
 const Body = z.object({ outcome: z.enum(["ready", "ready_with_support", "partially_ready"]), reason: z.string().min(5), tl_id: z.string() });
 export async function POST(req: Request, { params }: { params: { id: string } }) {
   const b = Body.parse(await req.json());
-  if (!getDb().cases.find((x) => x.id === params.id)) return notFound("case");
-  const d = save((db) => {
+  if (!(await getDb()).cases.find((x) => x.id === params.id)) return notFound("case");
+  const d = await save((db) => {
     const c = db.cases.find((x) => x.id === params.id)!;
     c.outcome = b.outcome; c.stage = "outcome";
     db.evidence.push({ id: `ev-tl-${Date.now()}`, case_id: c.id, scope_id: null, kind: "tl_review", author_role: "tl", author_label: "Tech Lead", author_id: b.tl_id,

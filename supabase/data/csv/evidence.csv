@@ -1,0 +1,66 @@
+id,case_id,scope_id,kind,author_role,author_label,author_id,source_ref,occurred_at,summary,claimed_status,support_level,reworked,value_0_100,disputed,extracted_by,status,simulated
+ev-email-1,ONB-002,,email,lm,Sara Neri (Project Manager),u-lm-sara,outlook://NIM-482/thread/access-request#msg-1,2026-10-07,"Requested Nova VPN, Orion Portal and Helix Service Desk accounts before project start. Project code NIM-482.",,,false,,false,ai,ok,false
+ev-email-2,ONB-002,,email,access_support,Access Support,,outlook://NIM-482/thread/access-request#msg-2,2026-10-14,Nova VPN active. Orion Portal awaiting application-owner approval. Helix Service Desk not provisioned.,,,false,,false,ai,ok,false
+ev-email-3,ONB-005,,tl_review,tl,Ada Quinn (Tech Lead),u-tl-orion,outlook://ORI-330/thread/kt-weekly#2026-10-13,2026-10-13,Completed first training topics. Handles standard requests with occasional support. Two complex scenarios still to cover.,ready_with_support,,false,75,true,ai,ok,false
+ev-email-4,ONB-005,,email,lm,Luca Gray (Line Manager),u-lm-luca,outlook://ORI-330/thread/lm-progress#2026-10-13,2026-10-13,From the local side everything looks complete and Eva works independently. Considers onboarding closed.,closed,,false,,true,ai,ok,false
+ev-email-5,ONB-009,,email,pmo,Sam Ortiz (PMO),u-pmo,outlook://ONB-009/thread/role-confirmation#msg-1,2026-10-08,"Asked the Technical Manager to confirm Lina's exact role, KT owner and expected readiness date. No reply recorded.",,,false,,false,ai,ok,false
+ev-update-6,ONB-010,,checkin,employee,Owen Hart (self),u-e-010,teams://axon-bot/checkin/ONB-010/2026-10-14,2026-10-14,Does daily standard activities alone. Still needs help with exceptions and production changes. All tools available. No date yet for the final readiness review.,partially_ready,,false,,false,ai,ok,false
+ev-update-7,ONB-007,,tracker,pmo,Onboarding tracker,,tracker://onboarding.xlsx/row/ONB-007,2026-09-20,Shadowing started; access expected next week. Status On Track.,on_track,,false,,false,ai,ok,false
+ev-email-8,ONB-006,,email,kt_owner,Ben Royce (KT owner),u-tl-atlas,outlook://ATL-512/thread/docs-location#msg-1,2026-10-11,Training guide and runbook are in /Team/Operations/Onboarding. Project-owned; keep only the folder reference.,,,false,,false,ai,ok,false
+ev-tr-001,ONB-001,,tracker,pmo,Onboarding tracker,,tracker://onboarding.xlsx/row/ONB-001,2026-10-13,Status Shadowing.,shadowing,,false,,false,manual,ok,false
+ev-tr-003,ONB-003,,tracker,pmo,Onboarding tracker,,tracker://onboarding.xlsx/row/ONB-003,2026-09-30,Status On Track. Project column empty.,on_track,,false,,false,manual,ok,false
+ev-tr-004,ONB-004,,tracker,pmo,Onboarding tracker,,tracker://onboarding.xlsx/row/ONB-004,2026-10-11,Status KT Started. Manager column empty.,kt_started,,false,,false,manual,ok,false
+ev-tr-006,ONB-006,,tracker,pmo,Onboarding tracker,,tracker://onboarding.xlsx/row/ONB-006,2026-10-12,Status Pre-Onboarding.,pre_onboarding,,false,,false,manual,ok,false
+ev-tr-008,ONB-008,,tracker,pmo,Onboarding tracker,,tracker://onboarding.xlsx/row/ONB-008,2026-10-14,Status Blocked. No reason or owner given.,blocked,,false,,false,manual,ok,false
+ev-tr-009,ONB-009,,tracker,pmo,Onboarding tracker,,tracker://onboarding.xlsx/row/ONB-009,2026-10-09,Status KT Started. Project column empty.,kt_started,,false,,false,manual,ok,false
+ev-t-005-1,ONB-005,s-005-1,task,tl,Ada Quinn,u-tl-orion,tasklog://ONB-005/ev-t-005-1,2026-09-29,Resolved 6 standard requests with a reviewer,,supported,false,60,false,manual,ok,true
+ev-t-005-2,ONB-005,s-005-1,task,tl,Ada Quinn,u-tl-orion,tasklog://ONB-005/ev-t-005-2,2026-10-02,"Resolved 9 standard requests alone, no rework",,independent,false,100,false,manual,ok,true
+ev-t-005-3,ONB-005,s-005-2,task,tl,Ada Quinn,u-tl-orion,tasklog://ONB-005/ev-t-005-3,2026-10-06,Triaged 4 incidents with guidance,,supported,false,60,false,manual,ok,true
+ev-t-005-4,ONB-005,s-005-2,task,tl,Ada Quinn,u-tl-orion,tasklog://ONB-005/ev-t-005-4,2026-10-08,Triaged 5 incidents alone; escalated 1 correctly,,independent,false,100,false,manual,ok,true
+ev-t-005-5,ONB-005,s-005-1,task,tl,Ada Quinn,u-tl-orion,tasklog://ONB-005/ev-t-005-5,2026-10-09,Resolved 11 standard requests alone,,independent,false,100,false,manual,ok,true
+ev-t-005-6,ONB-005,s-005-3,task,tl,Ada Quinn,u-tl-orion,tasklog://ONB-005/ev-t-005-6,2026-10-10,Joined outage drill; ran steps 1-4 with TL guiding,,supported,false,60,false,manual,ok,true
+ev-t-005-7,ONB-005,s-005-5,task,tl,Ada Quinn,u-tl-orion,tasklog://ONB-005/ev-t-005-7,2026-10-12,Wrote shift handover notes alone for 3 shifts,,independent,false,100,false,manual,ok,true
+ev-t-001-1,ONB-001,s-001-1,task,tl,Kai Brennan,u-tl-aurora,tasklog://ONB-001/ev-t-001-1,2026-10-08,Observed ticket handling session,,shadowing,false,20,false,manual,ok,true
+ev-t-001-2,ONB-001,s-001-2,task,tl,Kai Brennan,u-tl-aurora,tasklog://ONB-001/ev-t-001-2,2026-10-12,Observed knowledge base update,,shadowing,false,20,false,manual,ok,true
+ev-t-004-1,ONB-004,s-004-2,task,tl,Helios QA team,u-pmo,tasklog://ONB-004/ev-t-004-1,2026-10-08,Observed automation framework walkthrough,,shadowing,false,20,false,manual,ok,true
+ev-t-004-2,ONB-004,s-004-1,task,tl,Helios QA team,u-pmo,tasklog://ONB-004/ev-t-004-2,2026-10-10,Ran regression suite with reviewer,,supported,false,60,false,manual,ok,true
+ev-t-007-1,ONB-007,s-007-1,task,tl,Cleo Marsh,u-tl-nova,tasklog://ONB-007/ev-t-007-1,2026-09-18,Observed monitoring shift,,shadowing,false,20,false,manual,ok,true
+ev-t-008-1,ONB-008,s-008-1,task,tl,Ivo Sand,u-tl-pulse,tasklog://ONB-008/ev-t-008-1,2026-10-08,Fixed a pipeline job with guidance,,supported,false,60,false,manual,ok,true
+ev-t-008-2,ONB-008,s-008-2,task,tl,Ivo Sand,u-tl-pulse,tasklog://ONB-008/ev-t-008-2,2026-10-10,Built a dashboard tile under review,,supported,true,40,false,manual,ok,true
+ev-t-009-1,ONB-009,s-009-1,task,tl,Nina Cross,u-lm-nina,tasklog://ONB-009/ev-t-009-1,2026-10-09,Observed team standup and ticket flow,,shadowing,false,20,false,manual,ok,true
+ev-t-010-1,ONB-010,s-010-1,task,tl,Rhea Vance,u-tl-vega,tasklog://ONB-010/ev-t-010-1,2026-10-06,Ran daily checks alone for a week,,independent,false,100,false,manual,ok,true
+ev-t-010-2,ONB-010,s-010-2,task,tl,Rhea Vance,u-tl-vega,tasklog://ONB-010/ev-t-010-2,2026-10-09,Handled 2 exceptions with support,,supported,false,60,false,manual,ok,true
+ev-t-010-3,ONB-010,s-010-3,task,tl,Rhea Vance,u-tl-vega,tasklog://ONB-010/ev-t-010-3,2026-10-13,Prepared a production change with TL review,,supported,false,60,false,manual,ok,true
+ev-t-011-1,ONB-011,s-011-1,task,tl,Rhea Vance,u-tl-vega,tasklog://ONB-011/ev-t-011-1,2026-09-01,Ran daily checks with review,,supported,false,60,false,manual,ok,true
+ev-t-011-2,ONB-011,s-011-1,task,tl,Rhea Vance,u-tl-vega,tasklog://ONB-011/ev-t-011-2,2026-09-10,Ran daily checks alone for a week,,independent,false,100,false,manual,ok,true
+ev-t-011-3,ONB-011,s-011-2,task,tl,Rhea Vance,u-tl-vega,tasklog://ONB-011/ev-t-011-3,2026-09-16,Handled 4 exceptions alone; escalated 1 correctly,,independent,false,100,false,manual,ok,true
+ev-t-011-4,ONB-011,s-011-3,task,tl,Rhea Vance,u-tl-vega,tasklog://ONB-011/ev-t-011-4,2026-09-22,Prepared and ran 2 production changes alone,,independent,false,100,false,manual,ok,true
+ev-tl-011,ONB-011,,tl_review,tl,Rhea Vance (Tech Lead),u-tl-vega,teams://vega-kt/review/ONB-011,2026-09-25,All three scopes done alone with correct escalation. Ready.,ready,,false,100,false,ai,ok,true
+ev-t-012-1,ONB-012,s-012-1,task,tl,Ada Quinn,u-tl-orion,tasklog://ONB-012/ev-t-012-1,2026-09-24,Resolved 10 standard requests alone,,independent,false,100,false,manual,ok,true
+ev-t-012-2,ONB-012,s-012-2,task,tl,Ada Quinn,u-tl-orion,tasklog://ONB-012/ev-t-012-2,2026-10-01,Triaged 6 incidents alone; escalated 2 correctly,,independent,false,100,false,manual,ok,true
+ev-t-012-3,ONB-012,s-012-3,task,tl,Ada Quinn,u-tl-orion,tasklog://ONB-012/ev-t-012-3,2026-10-07,Outage drill with TL guiding steps 3-6,,supported,false,60,false,manual,ok,true
+ev-tl-012,ONB-012,,tl_review,tl,Ada Quinn (Tech Lead),u-tl-orion,outlook://ORI-330/thread/kt-weekly#2026-10-09,2026-10-09,Standard work and triage alone. Outage handling still needs guidance. Ready with Support.,ready_with_support,,false,75,false,ai,ok,true
+ev-lm-012,ONB-012,,email,lm,Luca Gray (Line Manager),u-lm-luca,outlook://ORI-330/thread/lm-progress#2026-10-10,2026-10-10,"Agrees with the TL: operational on standard work, still supported on outages.",ready_with_support,,false,,false,ai,ok,true
+ev-ai-013-1,ONB-013,,checkin,employee,Mira S. (Teams),,teams://axon-bot/dm/2026-10-13T09:12,2026-10-13,"Sender 'Mira S.' says the VPN connects. Name is close to Mila Rowan (ONB-001), so the case match is low confidence.",,,false,,false,ai,needs_review,true
+ev-t-014-1,ONB-014,s-014-1,task,tl,Ivo Sand,u-tl-pulse,tasklog://ONB-014/ev-t-014-1,2026-10-05,Restarted a failed load with TL guidance,,supported,false,60,false,manual,ok,true
+ev-t-014-2,ONB-014,s-014-1,task,tl,Ivo Sand,u-tl-pulse,tasklog://ONB-014/ev-t-014-2,2026-10-09,Fixed a schema drift issue under review,,supported,true,40,false,manual,ok,true
+ev-t-014-3,ONB-014,s-014-2,task,tl,Ivo Sand,u-tl-pulse,tasklog://ONB-014/ev-t-014-3,2026-10-06,Observed dashboard refresh process,,shadowing,false,20,false,manual,ok,true
+ev-t-015-1,ONB-015,s-015-1,task,tl,Ada Quinn,u-tl-orion,tasklog://ONB-015/ev-t-015-1,2026-10-06,Resolved 5 standard requests with a reviewer,,supported,false,60,false,manual,ok,true
+ev-t-015-2,ONB-015,s-015-1,task,tl,Ada Quinn,u-tl-orion,tasklog://ONB-015/ev-t-015-2,2026-10-10,"Resolved 7 standard requests, 1 reworked",,supported,true,40,false,manual,ok,true
+ev-t-015-3,ONB-015,s-015-2,task,tl,Ada Quinn,u-tl-orion,tasklog://ONB-015/ev-t-015-3,2026-10-07,Observed incident triage shift,,shadowing,false,20,false,manual,ok,true
+ev-hr-016,ONB-016,,email,hr,Hana Brooks (HR),u-hr,outlook://ATL-512/thread/new-start-jonah#msg-1,2026-10-13,"Start 19 Oct confirmed: Atlas, Operations Analyst, Maya Ford (LM), Ben Royce (TL and KT owner).",,,false,,false,ai,ok,true
+ev-t-017-1,ONB-017,s-017-1,task,tl,Kai Brennan,u-tl-aurora,tasklog://ONB-017/ev-t-017-1,2026-10-08,Observed ticket handling,,shadowing,false,20,false,manual,ok,true
+ev-t-017-2,ONB-017,s-017-1,task,tl,Kai Brennan,u-tl-aurora,tasklog://ONB-017/ev-t-017-2,2026-10-13,Handled 4 tickets with a reviewer,,supported,false,60,false,manual,ok,true
+ev-t-017-3,ONB-017,s-017-2,task,tl,Kai Brennan,u-tl-aurora,tasklog://ONB-017/ev-t-017-3,2026-10-09,Observed a knowledge base update,,shadowing,false,20,false,manual,ok,true
+ev-ai-017-1,ONB-017,,email,tl,Kai Brennan (Tech Lead),u-tl-aurora,outlook://AUR-114/thread/kt-weekly#2026-10-14,2026-10-14,Weekly KT note could not be split into scopes: output failed schema validation twice. Needs a PMO check.,,,false,,false,ai,needs_review,true
+ev-email-018-1,ONB-018,,email,access_support,Nova network team,,outlook://NOV-161/thread/noc-access-ruben#msg-2,2026-10-12,Reply to the PMO follow-up: NOC dashboard access granted today.,,,false,,false,ai,ok,true
+ev-t-018-1,ONB-018,s-018-1,task,tl,Cleo Marsh,u-tl-nova,tasklog://ONB-018/ev-t-018-1,2026-10-06,Observed monitoring shift,,shadowing,false,20,false,manual,ok,true
+ev-t-018-2,ONB-018,s-018-1,task,tl,Cleo Marsh,u-tl-nova,tasklog://ONB-018/ev-t-018-2,2026-10-13,Ran a monitoring shift with Cleo reviewing,,supported,false,60,false,manual,ok,true
+ev-t-018-3,ONB-018,s-018-2,task,tl,Cleo Marsh,u-tl-nova,tasklog://ONB-018/ev-t-018-3,2026-10-08,Observed a change request review,,shadowing,false,20,false,manual,ok,true
+ev-tr-019,ONB-019,,tracker,pmo,Onboarding tracker,,tracker://onboarding.xlsx/row/ONB-019,2026-10-10,Status On Track.,on_track,,false,,false,manual,ok,false
+ev-t-019-1,ONB-019,s-019-1,task,tl,Kai Brennan,u-tl-aurora,tasklog://ONB-019/ev-t-019-1,2026-09-22,Observed ticket handling,,shadowing,false,20,false,manual,ok,true
+ev-t-019-2,ONB-019,s-019-1,task,tl,Kai Brennan,u-tl-aurora,tasklog://ONB-019/ev-t-019-2,2026-09-30,Observed ticket handling again; did not take a ticket,,shadowing,false,20,false,manual,ok,true
+ev-t-019-3,ONB-019,s-019-1,task,tl,Kai Brennan,u-tl-aurora,tasklog://ONB-019/ev-t-019-3,2026-10-09,First supported ticket; reworked after review,,supported,true,40,false,manual,ok,true
+ev-bl-020,ONB-020,,checkin,employee,Gia Moretti (self),u-e-020,axon://blocker/ONB-020/2026-10-13,2026-10-13,"Reported blocker: the Nimbus test environment is down since 10 Oct, so integration tasks cannot run.",,,false,,false,manual,ok,false
+ev-tr-020,ONB-020,,tracker,pmo,Onboarding tracker,,tracker://onboarding.xlsx/row/ONB-020,2026-10-13,Status Blocked.,blocked,,false,,false,manual,ok,false
+ev-t-020-1,ONB-020,s-020-1,task,tl,Petra Lind,u-tl-nimbus,tasklog://ONB-020/ev-t-020-1,2026-10-08,Observed an integration flow deployment,,shadowing,false,20,false,manual,ok,true

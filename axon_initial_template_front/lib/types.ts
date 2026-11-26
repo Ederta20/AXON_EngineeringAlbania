@@ -254,7 +254,7 @@ export interface ClientRequirement {
   created_at: string;
 }
 
-export interface AuditEntry { id: string; actor: string; action: string; entity: string; entity_id: string; payload?: Record<string, unknown>; at: string }
+export interface AuditEntry { id: string; actor: string; action: string; entity: string; entity_id: string; payload?: Record<string, unknown>; at: string; agent?: string | null; model?: string | null }
 
 export interface Config {
   stale_days: number;

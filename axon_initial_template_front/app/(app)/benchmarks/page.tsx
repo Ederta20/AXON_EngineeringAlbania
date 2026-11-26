@@ -1,6 +1,7 @@
 "use client";
 // X3 Paths and benchmarks: benchmark days per stage vs current cases; template changes (from A9) to approve.
 import { useState } from "react";
+import { Sparkles } from "lucide-react";
 import { useAxon } from "@/lib/store";
 import { daysAgo } from "@/lib/dates";
 import { TODAY } from "@/lib/seed";
@@ -13,7 +14,16 @@ import { employee, project } from "@/lib/selectors";
 const ORDER: Stage[] = ["pre_onboarding", "setup", "in_kt", "awaiting_validation"];
 
 export default function Benchmarks() {
-  const { db, decideSuggestion } = useAxon();
+  const { db, decideSuggestion, improvePath, aiLive } = useAxon();
+  const [busy, setBusy] = useState(false);
+  const [note, setNote] = useState<string | null>(null);
+  const improve = async () => {
+    setBusy(true); setNote(null);
+    try {
+      const r = await improvePath(pathId);
+      setNote(r.source === "ai" ? (r.count ? `${r.count} template change${r.count === 1 ? "" : "s"} waiting for approval.` : "No new changes: confirm root causes on this path first.") : aiLive ? "AI unavailable right now." : "Demo mode: set NEXT_PUBLIC_DATA_SOURCE=api for live AI.");
+    } catch (e) { console.error(e); setNote("The request failed. Try again."); } finally { setBusy(false); }
+  };
   const [pathId, setPathId] = useState("pa-orion");
   const path = db.paths.find((p) => p.id === pathId)!;
   const bm = ORDER.map((s) => db.benchmarks.find((b) => b.path_id === pathId && b.stage === s)!);
@@ -34,6 +44,11 @@ export default function Benchmarks() {
         <select className="select" style={{ width: "min(260px, 100%)" }} value={pathId} onChange={(e) => setPathId(e.target.value)} aria-label="Path">
           {db.paths.map((p) => <option key={p.id} value={p.id}>{project(db, p.project_id)?.name} · {p.role_name}</option>)}
         </select>} />
+      <div className="row gap6" style={{ marginBottom: 12, flexWrap: "wrap" }}>
+        <button className="btn" onClick={improve} disabled={busy} title="The Process Improver (A9) recomputes the benchmark from completed onboardings and proposes template changes from confirmed root causes">
+          <Sparkles size={15} />{busy ? "AI is reviewing the path…" : "Suggest template changes"}</button>
+        {note && <span className="small ink2">{note}</span>}
+      </div>
       <Needed>{proposed.length ? `${proposed.length} template change${proposed.length > 1 ? "s" : ""} proposed from confirmed root causes. Approve the ones you want new onboardings to inherit.` : "No template changes waiting."}</Needed>
       <div className="grid split" style={{ gridTemplateColumns: "minmax(0,1.4fr) minmax(0,1fr)" }}>
         <Card title={`Days per stage · ${project(db, path.project_id)?.name}`} sub={<span className="row gap6">Benchmark = median of completed onboardings ({bm[0]?.n_completed ?? 0} on this path){bm[0]?.provisional && <span className="tag outline xs">Provisional</span>}<SimTag /></span>}>
