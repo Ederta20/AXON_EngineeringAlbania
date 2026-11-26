@@ -49,7 +49,7 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 /**
  * Calls Gemini and returns its JSON text plus the model that answered.
- * Rate limit (429): wait 15 s, retry once. Overloaded or slower than 20 s: retry once on GEMINI_FALLBACK_MODEL.
+ * Rate limit (429), overloaded or slower than 20 s: retry once on GEMINI_FALLBACK_MODEL (if that is rate-limited too, wait 15 s once).
  */
 async function generate(system: string, user: string, model: string): Promise<{ text: string; model: string }> {
   const once = async (m: string, timeout: number) => {
@@ -60,12 +60,20 @@ async function generate(system: string, user: string, model: string): Promise<{ 
     if (!r.text) throw new Error("empty model response");
     return { text: r.text, model: m };
   };
+  const fallback = process.env.GEMINI_FALLBACK_MODEL || "gemini-flash-lite-latest";
   try {
     return await once(model, 20_000);
   } catch (e) {
-    if (isRateLimit(e)) { await sleep(15_000); return once(model, 45_000); }
-    if (isOverloaded(e)) return once(process.env.GEMINI_FALLBACK_MODEL || "gemini-flash-lite-latest", 45_000);
-    throw e;
+    if (!isRateLimit(e) && !isOverloaded(e)) throw e;
+    // Quota used up, overloaded or slow: the lighter model has its own quota, so switch to it.
+    const next = model === fallback ? model : fallback;
+    try {
+      return await once(next, 45_000);
+    } catch (e2) {
+      if (!isRateLimit(e2)) throw e2;
+      await sleep(15_000); // both rate-limited: wait once
+      return once(next, 45_000);
+    }
   }
 }
 
