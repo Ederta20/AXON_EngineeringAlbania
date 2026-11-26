@@ -43,7 +43,8 @@ interface Store {
   generateChallenges(skillId: string): Promise<AgentRun>;      // POST /api/agents/challenges (A7)
   improvePath(pathId: string): Promise<AgentRun>;              // POST /api/agents/improve (A9)
   writeReport(audience: "management" | "digest"): Promise<{ source: "ai" | "mock"; subject: string; text: string }>; // POST /api/agents/report (A8)
-  pasteUpdate(caseId: string, text: string): Promise<PasteResult>; // POST /api/agents/extract (A1, text typed in AXON)
+  pasteUpdate(caseId: string, text: string): Promise<PasteResult>;
+  reviewEvidence(id: string, accept: boolean): void;            // PMO: accept or discard evidence A1 marked needs_review // POST /api/agents/extract (A1, text typed in AXON)
   resolveFlag(flagId: string, reason: string): void;           // PATCH /api/flags/:id {status: resolved}
   decideValidation(id: string, level: ScopeLevel, reason: string | null): void; // POST /api/validations/:id/decide
   setOutcome(caseId: string, outcome: Outcome, reason: string): void;          // POST /api/cases/:id/outcome
@@ -262,6 +263,13 @@ export function AxonProvider({ children }: { children: React.ReactNode }) {
       if (API) return postAgent<{ source: "ai" | "mock"; subject: string; text: string }>("/api/agents/report", { audience, user_id: user?.id }); // A8: numbers from code, words from the model
       await wait(700);
       return { source: "mock", subject: "AXON report (demo mode)", text: "Live reports need NEXT_PUBLIC_DATA_SOURCE=api. The numbers on this page are the same ones the report would use." };
+    },
+
+    reviewEvidence(id, accept) {
+      commit((d) => {
+        if (accept) { const e = d.evidence.find((x) => x.id === id); if (e) e.status = "ok"; }
+        else d.evidence = d.evidence.filter((x) => x.id !== id);
+      }, { action: accept ? "accept_evidence" : "discard_evidence", entity: "evidence", entity_id: id });
     },
 
     async pasteUpdate(caseId, text) {

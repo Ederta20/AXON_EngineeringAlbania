@@ -87,3 +87,7 @@ Every model call writes an `audit_log` row: `actor = agent:<id>`, `action = ai_c
 
 ## Connectors
 Requests to `/api/ingest/*` and `/api/outbox*` are signed: `x-axon-timestamp` plus `x-axon-signature = HMAC-SHA256(CONNECTOR_SECRET, timestamp + body)`, valid for 5 minutes. Simple mode sends `x-axon-secret` instead. The mock connector signs, replays the starter pack, and delivers approved actions from the outbox every 10 s.
+
+## Completion and review (brief p.22, p.24-25)
+- **A9 trigger:** when a case completes (its outcome is set, or it reaches Closed), A9 runs on its path (`lib/server/completion.ts`, hooked into `PUT /api/db` and `POST /api/cases/:id/outcome`). The app has no Closed step yet, so setting the outcome is the trigger. **To confirm.**
+- **Needs review (PMO, flags board):** evidence A1 saved as `needs_review` (low confidence), with Accept or Discard, plus replies A5 could not match to an action (logged as `reply_unmatched` in `audit_log`).
