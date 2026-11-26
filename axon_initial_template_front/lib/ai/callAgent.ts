@@ -6,8 +6,12 @@
 //   - Model output passes                                   -> source "ai", status "ok".
 // So the demo never breaks, and routes never need to know whether the answer came from a model.
 //
-// TO IMPLEMENT THE AGENTS: fill in generate() below, then write the prompts in lib/ai/prompts.ts. Nothing else has to change.
+// generate() calls Gemini (@google/genai). To make another agent real, write its prompt in lib/ai/prompts.ts:
+// prompts that still contain "TODO:" stay on the mock, so a half-written agent never slows the demo down.
+import { createHash } from "crypto";
+import { GoogleGenAI } from "@google/genai";
 import type { ZodType } from "zod";
+import { aiCache } from "@/lib/server/db";
 
 export type AgentId = "A1" | "A2" | "A3" | "A4" | "A5" | "A6" | "A7" | "A8" | "A9" | "A10";
 
@@ -35,44 +39,72 @@ export interface AgentResult<T> {
 
 class NotImplemented extends Error {}
 
+let client: GoogleGenAI | null = null;
+const ai = () => (client ??= new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY, apiVersion: "v1beta" }));
+const errText = (e: any) => String(e?.message ?? e) + (e?.name ?? "");
+const isRateLimit = (e: any) => e?.status === 429 || /RESOURCE_EXHAUSTED|"code":429/.test(errText(e));
+// Overloaded, timed out or aborted: switch to the fallback model.
+const isOverloaded = (e: any) => [503, 504].includes(e?.status) || /UNAVAILABLE|DEADLINE_EXCEEDED|"code":50[34]|abort|timeout/i.test(errText(e));
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
 /**
- * Calls the model and returns its raw text, which must be a JSON object.
- * TODO(agents): implement with the Gemini SDK or REST API, for example:
- *   POST https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent
- *   header x-goog-api-key: process.env.GEMINI_API_KEY
- *   body { systemInstruction: { parts: [{ text: system }] },
- *          contents: [{ role: "user", parts: [{ text: user }] }],
- *          generationConfig: { responseMimeType: "application/json", temperature: 0.2 } }
- *   return data.candidates[0].content.parts[0].text
+ * Calls Gemini and returns its JSON text plus the model that answered.
+ * Rate limit (429): wait 15 s, retry once. Overloaded or slower than 20 s: retry once on GEMINI_FALLBACK_MODEL.
  */
-async function generate(system: string, user: string, model: string): Promise<string> {
-  void system; void user; void model;
-  throw new NotImplemented("generate() is not implemented yet");
+async function generate(system: string, user: string, model: string): Promise<{ text: string; model: string }> {
+  const once = async (m: string, timeout: number) => {
+    const r = await ai().models.generateContent({
+      model: m, contents: user,
+      config: { systemInstruction: system, responseMimeType: "application/json", temperature: 0.2, httpOptions: { timeout } },
+    });
+    if (!r.text) throw new Error("empty model response");
+    return { text: r.text, model: m };
+  };
+  try {
+    return await once(model, 20_000);
+  } catch (e) {
+    if (isRateLimit(e)) { await sleep(15_000); return once(model, 45_000); }
+    if (isOverloaded(e)) return once(process.env.GEMINI_FALLBACK_MODEL || "gemini-flash-lite-latest", 45_000);
+    throw e;
+  }
 }
 
 /** Small model for A1, A5, A6; larger for A2, A3, A9 (brief, Part 5). Override per agent with env vars if needed. */
 function modelFor(agent: AgentId) {
-  const small = process.env.GEMINI_MODEL_SMALL ?? process.env.GEMINI_MODEL ?? "gemini-flash";
-  const large = process.env.GEMINI_MODEL ?? small;
+  const small = process.env.GEMINI_MODEL_SMALL || process.env.GEMINI_MODEL || "gemini-flash-latest";
+  const large = process.env.GEMINI_MODEL || small;
   return ["A1", "A5", "A6"].includes(agent) ? small : large;
 }
 
 export async function callAgent<T>(call: AgentCall<T>): Promise<AgentResult<T>> {
   const agent = AGENT_NAMES[call.agent];
   const mock = (status: "ok" | "needs_review"): AgentResult<T> => ({ output: call.fallback(), source: "mock", status, model: "mock", agent });
-  if (!process.env.GEMINI_API_KEY) return mock("ok");
+  if (!process.env.GEMINI_API_KEY || call.system.includes("TODO:")) return mock("ok");
 
-  const model = modelFor(call.agent);
+  // Same agent + prompt + input -> same answer: serve it from ai_cache (AI_CACHE=on) without calling the model.
+  const useCache = process.env.AI_CACHE === "on";
+  const key = createHash("sha256").update(call.agent + call.system + JSON.stringify(call.input)).digest("hex");
+  if (useCache) {
+    const hit = await aiCache.get(key);
+    const parsed = hit ? call.schema.safeParse((hit as { output: unknown }).output) : null;
+    if (parsed?.success) return { output: parsed.data, source: "ai", status: "ok", model: (hit as { model: string }).model, agent };
+  }
+
+  let model = modelFor(call.agent);
   let user = JSON.stringify(call.input);
   for (let attempt = 0; attempt < 2; attempt++) {
     try {
-      const raw = await generate(call.system, user, model);
-      const parsed = call.schema.safeParse(JSON.parse(raw));
-      if (parsed.success) return { output: parsed.data, source: "ai", status: "ok", model, agent };
+      const res = await generate(call.system, user, model);
+      model = res.model;
+      const parsed = call.schema.safeParse(JSON.parse(res.text));
+      if (parsed.success) {
+        if (useCache) await aiCache.upsert(key, { output: parsed.data, model });
+        return { output: parsed.data, source: "ai", status: "ok", model, agent };
+      }
       user = `${JSON.stringify(call.input)}\n\nYour previous answer did not match the required JSON schema: ${parsed.error.message}. Answer again with valid JSON only.`;
     } catch (e) {
       if (e instanceof NotImplemented) return mock("ok");
-      console.error(`${agent} call failed`, e);
+      console.error(`${agent} call failed:`, e instanceof Error ? e.message : e);
     }
   }
   return mock("needs_review"); // invalid twice: keep the demo running, mark for a person to check

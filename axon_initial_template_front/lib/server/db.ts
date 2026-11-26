@@ -192,3 +192,21 @@ export function publicDb(d: Db): Db {
 
 export const json = (data: unknown, status = 200) => Response.json(data, { status });
 export const notFound = (what: string) => json({ error: `${what} not found` }, 404);
+
+// ai_cache table (supabase/migrations/*_ai_cache.sql): Supabase when configured, in-memory otherwise.
+// A cache error (e.g. the table is not created yet) never breaks an agent call: it counts as a miss.
+const gc = globalThis as unknown as { __axonAiCache?: Map<string, unknown> };
+const memCache = () => (gc.__axonAiCache ??= new Map());
+export const aiCache = {
+  async get(key: string): Promise<unknown> {
+    if (!usingSupabase) return memCache().get(key);
+    const { data, error } = await sb().from("ai_cache").select("output").eq("key", key).maybeSingle();
+    if (error) { console.warn(`[ai_cache] read: ${error.message}`); return undefined; }
+    return data?.output ?? undefined;
+  },
+  async upsert(key: string, output: unknown): Promise<void> {
+    if (!usingSupabase) return void memCache().set(key, output);
+    const { error } = await sb().from("ai_cache").upsert({ key, output }, { onConflict: "key" });
+    if (error) console.warn(`[ai_cache] write: ${error.message}`);
+  },
+};
