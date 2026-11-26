@@ -7,6 +7,10 @@ import { makeSeed, TODAY } from "./seed";
 import { runRules } from "./rules";
 import { draftAction as a4, parseRequirement as a10, REPLIES, replyEvidence, scoreOneOnOne } from "./agents";
 import { addDays } from "./dates";
+import { diffDb, isEmpty } from "./dbdiff";
+
+// "api": load from and save to Supabase through /api/db. "mock" (default): everything stays in this browser.
+const API = process.env.NEXT_PUBLIC_DATA_SOURCE === "api";
 
 const KEY = "axon-demo-v3";
 const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
@@ -61,37 +65,69 @@ export function AxonProvider({ children }: { children: React.ReactNode }) {
   const dbRef = useRef(db);
   dbRef.current = db;
 
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem(KEY);
-      if (raw) { const s = JSON.parse(raw); if (s.db) setDb(s.db); if (s.userId) setUserId(s.userId); }
-    } catch { /* storage can be unavailable */ }
-    setReady(true);
+  const pending = useRef(0);
+  const queue = useRef<Promise<void>>(Promise.resolve());
+
+  const loadFromServer = useCallback(async () => {
+    const r = await fetch("/api/db", { cache: "no-store" });
+    if (!r.ok) throw new Error(`GET /api/db ${r.status}`);
+    const d = (await r.json()) as Db;
+    dbRef.current = d;
+    setDb(d);
   }, []);
 
   useEffect(() => {
+    try {
+      const raw = localStorage.getItem(KEY);
+      if (raw) { const s = JSON.parse(raw); if (!API && s.db) setDb(s.db); if (s.userId) setUserId(s.userId); }
+    } catch { /* storage can be unavailable */ }
+    if (!API) { setReady(true); return; }
+    loadFromServer().catch((e) => console.error("AXON: could not load from the database", e)).finally(() => setReady(true));
+  }, [loadFromServer]);
+
+  useEffect(() => {
     if (!ready) return;
-    try { localStorage.setItem(KEY, JSON.stringify({ db, userId })); } catch { /* ignore */ }
+    try { localStorage.setItem(KEY, JSON.stringify(API ? { userId } : { db, userId })); } catch { /* ignore */ }
   }, [db, userId, ready]);
+
+  /** api mode: send only the rows an action changed; the server writes them, reruns the rules and returns the new state. */
+  const sync = useCallback((prev: Db, next: Db) => {
+    const changes = diffDb(prev, next);
+    if (isEmpty(changes)) return;
+    pending.current++;
+    queue.current = queue.current.then(async () => {
+      try {
+        const r = await fetch("/api/db", { method: "PUT", headers: { "content-type": "application/json" }, body: JSON.stringify(changes) });
+        if (!r.ok) throw new Error(await r.text());
+        const server = (await r.json()) as Db;
+        if (--pending.current === 0) { dbRef.current = server; setDb(server); } // a newer local change is still on its way
+      } catch (e) {
+        pending.current--;
+        console.error("AXON: could not save to the database", e);
+        if (typeof window !== "undefined") window.alert("Could not save this change to the database. Check the terminal running npm run dev.");
+      }
+    });
+  }, []);
 
   const user = useMemo(() => db.users.find((u) => u.id === userId) ?? null, [db.users, userId]);
   const actor = user ? `${user.name} (${user.title})` : "system";
 
   const commit = useCallback((fn: (d: Db) => void, audit?: { action: string; entity: string; entity_id: string; payload?: Record<string, unknown>; actor?: string }) => {
-    setDb((prev) => {
-      const d = structuredClone(prev);
-      fn(d);
-      runRules(d);
-      if (audit) d.audit_log.unshift({ id: uid("au"), actor: audit.actor ?? actor, at: new Date().toISOString(), ...audit });
-      return d;
-    });
-  }, [actor]);
+    const prev = dbRef.current;
+    const d = structuredClone(prev);
+    fn(d);
+    runRules(d);
+    if (audit) d.audit_log.unshift({ id: uid("au"), actor: audit.actor ?? actor, at: new Date().toISOString(), ...audit });
+    dbRef.current = d; // so back-to-back actions build on each other
+    setDb(d);
+    if (API) sync(prev, d);
+  }, [actor, sync]);
 
   const store: Store = {
     db, user, ready,
     login: (id) => setUserId(id),
     logout: () => setUserId(null),
-    reset: () => { setDb(fresh()); },
+    reset: () => { if (API) loadFromServer().catch((e) => console.error(e)); else setDb(fresh()); }, // api mode: reload from the database
 
     async draftNextAction(flagId) {
       await wait(900); // model latency, so the "drafting" state is visible

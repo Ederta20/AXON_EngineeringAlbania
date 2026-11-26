@@ -8,6 +8,7 @@ import type { Config, Db } from "../types";
 import { makeSeed } from "../seed";
 import { runRules } from "../rules";
 import { TABLES, rowKey, type TableDef } from "./tables";
+import { applyDiff, type DbChanges } from "../dbdiff";
 
 type Audit = { actor: string; action: string; entity: string; entity_id: string; payload?: Record<string, unknown> };
 type Row = Record<string, unknown>;
@@ -103,6 +104,11 @@ function rowsFor(def: TableDef, db: Loaded, today: string): Row[] {
 
 async function writeDiff(before: Loaded, after: Loaded) {
   const today = new Date().toISOString().slice(0, 10);
+  if (JSON.stringify(before.config) !== JSON.stringify(after.config)) {
+    const rows = Object.entries(after.config).map(([key, value]) => ({ key, value }));
+    const { error } = await sb().from("config").upsert(rows, { onConflict: "key" });
+    if (error) throw new Error(`Supabase write config: ${error.message}`);
+  }
   const plans = TABLES.map((def) => {
     const prev = new Map(rowsFor(def, before, today).map((r) => [rowKey(def, r), JSON.stringify(r)]));
     const next = rowsFor(def, after, today);
@@ -158,6 +164,30 @@ export async function save(mutate: (d: Db) => void, audit?: Audit): Promise<Db> 
   await writeDiff(before, after);
   g.__axonCache = { at: Date.now(), db: after };
   return after;
+}
+
+/** PUT /api/db: apply the rows a browser action changed, rerun the rules, return the new state. */
+export async function applyChanges(changes: DbChanges): Promise<Db> {
+  if (!usingSupabase) {
+    const d = memDb();
+    applyDiff(d, changes);
+    return runRules(d);
+  }
+  g.__axonCache = undefined;
+  const before = await loadRaw();
+  const after = structuredClone(before);
+  applyDiff(after, changes);
+  runRules(after);
+  await writeDiff(before, after);
+  g.__axonCache = { at: Date.now(), db: after };
+  return after;
+}
+
+/** The Db without server-only helper fields, for sending to the browser. */
+export function publicDb(d: Db): Db {
+  const { _done_rows, ...rest } = d as Loaded;
+  void _done_rows;
+  return rest;
 }
 
 export const json = (data: unknown, status = 200) => Response.json(data, { status });

@@ -72,7 +72,7 @@ lib/server/            in-memory db for API routes, connector signature check
 
 1. **Done:** `lib/server/db.ts` reads and writes Supabase when `NEXT_PUBLIC_SUPABASE_URL` and `SUPABASE_SECRET_KEY` are set in `.env.local` (schema and seed in `/supabase`). Without them it falls back to the in-memory seed. `save()` reruns the rules engine and writes back only the changed rows; `lib/server/tables.ts` maps each table.
 2. In each `app/api/agents/*/route.ts`, swap the mock for `callAgent(...)` (see the TODO in each file and the backend setup doc). Only `lib/ai/callAgent.ts` may import the Gemini SDK.
-3. In `lib/store.tsx`, replace each action body with a `fetch` to the route named in its comment. Components don't change.
+3. **Done:** with `NEXT_PUBLIC_DATA_SOURCE=api`, `lib/store.tsx` loads everything from `GET /api/db` and, after each action, sends only the changed rows to `PUT /api/db` (`lib/dbdiff.ts`). The server writes them to Supabase, reruns the rules and returns the new state. **Reset demo** reloads from the database instead of the seed. Demo shortcut: `PUT /api/db` accepts any row; move to the per-action routes with role checks before real users.
 4. Connectors (`/connectors`, separate process) talk only to `/api/ingest/*` and `/api/outbox`, signed with `CONNECTOR_SECRET`. AXON never reads mail or chat.
 
 ### API contract
